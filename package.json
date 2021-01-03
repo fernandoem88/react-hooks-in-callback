@@ -6,7 +6,7 @@
     "email": "vs_fernando@yahoo.fr",
     "url": "https://www.linkedin.com/in/fernando-ekutsu-mondele-67405484/"
   },
-  "description": "Made with create-react-library",
+  "description": "React hooks in callback",
   "license": "MIT",
   "repository": "/react-hooks-in-callback",
   "main": "dist/index.js",
@@ -65,6 +65,16 @@
     "typescript": "^3.7.5",
     "uniqid": "^5.2.0"
   },
+  "keywords": [
+    "react",
+    "react-hooks",
+    "callback",
+    "action",
+    "react-action",
+    "react-redux",
+    "redux",
+    "redux-thunk"
+  ],
   "files": [
     "dist"
   ]
