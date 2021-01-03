@@ -83,7 +83,7 @@ const Field = (name: string) => {
 
 The issue here is the re-render noise introduced by the formik context. everytime a field will be updated, all the other fields will re-render since they are using the same context. this will lead to a bad performance.
 
-check this _formik with the noisy re-render example_ [here](https://codesandbox.io/s/formik-normal-5vchh?file=/src/Field.js)
+check this **formik with noisy re-render** example [here](https://codesandbox.io/s/formik-normal-5vchh?file=/src/Field.js)
 
 We can solve that issue if we can take the formik context out of the Field component and get its state only when there is a click event. This is what we are going to do by using useHooksInCallback.
 
@@ -105,7 +105,7 @@ const Field = (name: string) => {
 }
 ```
 
-Check the _formik with hooks-in-callback_ example [here](https://codesandbox.io/s/formik-with-hooks-in-callback-jeo4i?file=/src/Field.js)
+Check the **formik with hooks-in-callback** example [here](https://codesandbox.io/s/formik-with-hooks-in-callback-jeo4i?file=/src/Field.js)
 
 ## Waiting for a specific state before resolving the getHookState
 
