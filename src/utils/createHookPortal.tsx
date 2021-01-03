@@ -103,7 +103,7 @@ export const createActionUtils = <Config extends {}>(
     name?: string
   ) => {
     type State = ReturnType<Hook>
-    const useHookState = hook
+    const useProvidedHook = hook
     let resolved = false
     const hookName = name
 
@@ -150,7 +150,7 @@ export const createActionUtils = <Config extends {}>(
        * @description
        */
       const useHooksWrapper = () => {
-        const state = useHookState() as State
+        const state = useProvidedHook() as State
         getState = () => state
         useEffect(() => {
           // execute doResolve for every state

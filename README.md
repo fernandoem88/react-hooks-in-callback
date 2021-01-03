@@ -83,7 +83,7 @@ const Field = (name: string) => {
 
 The issue here is the re-render noise introduced by the formik context. everytime a field will be updated, all the other fields will re-render since they are using the same context. this will lead to a bad performance.
 
-check this [noisy re-render example](https://twitter.com/fernandoEM20/status/1345139207619162119/photo/1)
+check this [noisy re-render example](https://codesandbox.io/s/formik-normal-5vchh?file=/src/Form.js)
 
 We can solve that issue if we can take the formik context out of the Field component and get its state only when there is a click event. This is what we are going to do by using useHooksInCallback.
 
@@ -105,7 +105,7 @@ const Field = (name: string) => {
 }
 ```
 
-Check the sceenshot result [here](https://twitter.com/fernandoEM20/status/1345139643549962242/photo/1)
+Check sandbox result [here](https://codesandbox.io/s/formik-with-hooks-in-callback-jeo4i)
 
 ## Waiting for a specific state before resolving the getHookState
 
@@ -157,7 +157,7 @@ the reason to use the **react-hooks-in-callback** approach instead is because it
 
 let's see some concret example.
 
-you have some configs and utilities in your **configs.ts**
+First, let's define some configs and utilities in our **configs.ts**
 
 ```typescript
 import Axios from "axios";
@@ -188,7 +188,7 @@ export const utils = createActionUtils(configs);
 // Utils: { getHookState, getConfig, setConfig, useConfig, HooksWrapper }
 ```
 
-then you can define you **actions.ts** file and use your configs like this:
+Then we can define our **actions.ts** file and use our configs like this:
 
 ```typescript
 import { utils, useActionUtils } from './configs'
@@ -218,9 +218,9 @@ const login = async (user: string) => {
 }
 ```
 
-As you can notice in your action, the only one parameter is _user_. every other parameters related to hooks are defined directly in **useActionUtils** and every change depending on it will be done only in it and won't affect your components.
+As we can notice in our action, the only one parameter is _user_. every other parameters related to hooks are defined directly in **useActionUtils** and every change depending on it will be done only in it and won't affect our components.
 
-if it was a redux-thunk action, the synthax would be more complex, check the difference bellow.
+if it was a redux-thunk action, the synthax would be more complex, we can see the difference bellow.
 
 ```typescript
 // redux-thunk action
@@ -298,5 +298,7 @@ export const Root = () => {
   </Provider>
 }
 ```
+
+you can fnd the the redux example in this [sandbox](https://codesandbox.io/s/redux-with-hooks-in-callback-bzzjb?file=/src/actions.js)
 
 Try it out!

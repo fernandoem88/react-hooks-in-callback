@@ -15,7 +15,12 @@ export const MyForm = () => {
     <Formik
       initialValues={{ pippo: 0, pluto: 0, songolo: 0, pakala: 0 }}
       onSubmit={(values) => {
-        console.log('onSubmit values', values)
+        console.log('values', values)
+        const obj = Object.entries(values).reduce((prev, entry) => {
+          const [k, v] = entry
+          return `${prev}\n${k}: ${v}`
+        }, '')
+        alert(obj)
       }}
     >
       <div>
