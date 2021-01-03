@@ -30,7 +30,7 @@ import produce from 'immer'
 import { createStore } from './store'
 import HooksHandler from '../components/HooksHandler'
 import { shallowEqual } from 'shallow-utils'
-import { useForceUpdate } from '../hooks'
+import useForceUpdate from '../hooks/useForceUpdate'
 // eslint-disable-next-line
 import { ResolverUtils } from 'react-hooks-in-callback'
 
