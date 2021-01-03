@@ -67,7 +67,7 @@ export const createActionUtils = <Config extends {}>(
   const useConfig = <R extends any = Config>(
     selector: (config: Config) => R = ((config: Config) => config) as any
   ) => {
-    const [forceUpdate] = useForceUpdate()
+    const forceUpdate = useForceUpdate()
     useEffect(() => {
       // side effects
       const sub = $config.subscribe((action: any) => {

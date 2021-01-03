@@ -6,8 +6,8 @@ const useForceUpdate = () => {
     ioRef.current = io
   })
   const forceUpdate = useCallback(() => setIO(!ioRef.current), [])
-  const state = useMemo(() => [forceUpdate, io], [forceUpdate, io])
-  return state as [() => void, boolean]
+  const state = useMemo(() => forceUpdate, [forceUpdate])
+  return state
 }
 
 export default useForceUpdate

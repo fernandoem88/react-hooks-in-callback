@@ -1,17 +1,23 @@
-import React from "react";
-import { useFormikContext, Form, Formik } from "formik";
-import { useHooksInCallback } from "react-hooks-in-callback";
-import { MyField } from "./Field";
+import React from 'react'
+import { useFormikContext, Form, Formik } from 'formik'
+import { useHooksInCallback } from 'react-hooks-in-callback'
+import { MyField } from './Field'
 
-const mainStyle = {};
-const h1Style = {};
-const btnStyle = {};
-const names = ["pippo", "pluto", "songolo", "pakala"];
+const mainStyle = {}
+const h1Style = {}
+const btnStyle = {}
+const names = ['pippo', 'pluto', 'songolo', 'pakala']
 
 export const MyForm = () => {
-  const [HooksWrapper, getHookState] = useHooksInCallback();
+  const [HooksWrapper, getHookState] = useHooksInCallback()
+  console.log('Form')
   return (
-    <Formik>
+    <Formik
+      initialValues={{ pippo: 0, pluto: 0, songolo: 0, pakala: 0 }}
+      onSubmit={(values) => {
+        console.log('onSubmit values', values)
+      }}
+    >
       <div>
         <HooksWrapper />
         <div style={mainStyle}>
@@ -19,8 +25,8 @@ export const MyForm = () => {
           <button
             style={btnStyle}
             onClick={async () => {
-              const formik = await getHookState(useFormikContext);
-              formik.submitForm();
+              const formik = await getHookState(useFormikContext)
+              formik.submitForm()
             }}
           >
             Submit
@@ -33,5 +39,5 @@ export const MyForm = () => {
         </Form>
       </div>
     </Formik>
-  );
-};
+  )
+}
