@@ -50,3 +50,5 @@ declare module 'shallow-utils' {
   export function shallowEqualExcept(): any
   export function shallowItemsDifferExcept(): any
 }
+
+declare module 'uniqid'

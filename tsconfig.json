@@ -16,8 +16,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
-    "typeRoots": ["./src/typings", "./src/index.d.ts"]
+    "typeRoots": ["./typings"]
   },
-  "include": ["src"],
+  "include": ["src", "typings"],
   "exclude": ["node_modules", "dist", "example"]
 }

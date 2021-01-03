@@ -1,6 +1,5 @@
 declare module 'react-hooks-in-callback' {
-  import React from 'react'
-  export interface ResolverUtils<State> {
+  export type ResolverUtils<State> = {
     resolve: (state: State) => void
     reject: (error: any) => void
     isBeforeUnmount: boolean

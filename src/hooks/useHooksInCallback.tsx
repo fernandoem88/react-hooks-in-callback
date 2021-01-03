@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { createActionUtils } from "../utils";
+import { useState } from 'react'
+import { createActionUtils } from '../utils/createHookPortal'
 
 const useHooksInCallback = () => {
   const [state] = useState(() => {
-    const { getHookState, HooksWrapper } = createActionUtils({});
+    const { getHookState, HooksWrapper } = createActionUtils({})
     return [HooksWrapper, getHookState] as [
       typeof HooksWrapper,
       typeof getHookState
-    ];
-  });
-  return state;
-};
+    ]
+  })
+  return state
+}
 
-export default useHooksInCallback;
+export default useHooksInCallback
