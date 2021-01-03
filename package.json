@@ -1,8 +1,11 @@
 {
   "name": "react-hooks-in-callback-beta",
+  "author": {
+    "name": "Fernando Ekutsu Mondele",
+    "email": "vs_fernando@yahoo.fr"
+  },
   "version": "1.0.0",
   "description": "Made with create-react-library",
-  "author": "",
   "license": "MIT",
   "repository": "/react-hooks-in-callback",
   "main": "dist/index.js",
