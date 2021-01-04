@@ -7,7 +7,7 @@ using _hooks in callback_ can help us:
 - filtering out some unwanted re-render noise due to useless hooks.
 - having a simplified version of async actions (a really nice alternative to _redux-thunk_).
 
-## simple to use
+## Usage
 
 ```typescript
 import { useHooksInCallback } from "react-hooks-in-callback";
@@ -64,7 +64,7 @@ const TestComponent = () => {
 }
 ```
 
-## Filtering context re-render noise - Formik example
+## Filtering context re-render noise: Formik example
 
 Imagine to have a list of fields where each field component uses formik context just to set the field value on click event.
 the scenario is the following one:
@@ -83,7 +83,7 @@ const Field = (name: string) => {
 
 The issue here is the re-render noise introduced by the formik context. everytime a field will be updated, all the other fields will re-render since they are using the same context. this will lead to a bad performance.
 
-check this **formik with noisy re-render** example [here](https://codesandbox.io/s/formik-normal-5vchh?file=/src/Field.js)
+Check the **formik with context's re-render noise** example [here](https://codesandbox.io/s/formik-normal-5vchh?file=/src/Field.js)
 
 We can solve that issue if we can take the formik context out of the Field component and get its state only when there is a click event. This is what we are going to do by using useHooksInCallback.
 
@@ -124,7 +124,7 @@ const useDivCount = () => {.
 };
 ```
 
-so in this case we will want to skip the undefined value and wait for the number value.
+So in this case what we want to do is to skip the undefined value and wait for the number value.
 
 ```typescript
 const hookState = await getHookState(
@@ -142,11 +142,11 @@ const hookState = await getHookState(
       // use utils.reject or throw some error
     }
   },
-  'useDivCount' // this is just for debugging purpose,so you can check which hook is still mounted in react dev tools in your browser
+  'useDivCount' // (optional) This parameter is just for debugging purpose,so you can check which hook is still mounted in react dev tools in your browser
 )
 ```
 
-Find another example [here](https://codesandbox.io/s/waiting-for-a-specific-state-ilqtv?file=/src/App.js)
+Find and advanced example [here](https://codesandbox.io/s/waiting-for-a-specific-state-ilqtv?file=/src/UserPass.js)
 
 ## use createActionUtils instead of redux-thunk
 
@@ -208,9 +208,9 @@ const login = async (user: string) => {
       // cfg is our custom config: what we defined in configs.ts
       cfg.token = token // we can access the cfg value by using useConfig in the component,
     })
+    history.push('/home')
     const { data: users } = await configs.api.getUsers(token)
     dispatch({ type: 'usersFetchSuccess', payload: users })
-    history.push('/home')
     // just to check if everything is fine, you can log your redux state here
     // const storeState = getState();
     // console.log(storeState)
@@ -225,14 +225,14 @@ As we can notice in our action, the only one parameter is _user_. every other pa
 if it was a redux-thunk action, the synthax would be more complex, we can see the difference bellow.
 
 ```typescript
-// redux-thunk action
+// redux-thunk action synthax
 const login = (user: string, history: History) => {
-  //  hooks values/states should be passed as action params: history for example
+  //  hooks values/states should be passed as action params like we passed history in this example
   return async (dispatch, getState, config: Config) => {
     // action logic goes here
   }
 }
-// react-hooks-in-callback action
+// react-hooks-in-callback action synthax
 const login = async (user: string) => {
   //  hooks values/states and config are defined directly in the action body
   // action logic goes here
@@ -287,20 +287,23 @@ const App = () => {
 }
 
 export const Root = () => {
-  ;<Provider store={store}>
-    ...
-    <Router>
-      {/*HooksWrapper is where useStore, useHistory, useParams,... will be mounted
-      so it should be under the providers tree (in our case redux and router Providers).
-      it also should be mounted before the App component where the actions will be called.
-      */}
-      <HooksWrapper />
-      <App />
-    </Router>
-  </Provider>
+  return (
+    <Provider store={store}>
+      ...
+      <Router>
+        {/*
+          HooksWrapper is where useStore, useHistory, useParams,... will be mounted
+          so it should be under the providers tree (in our case under redux and router Providers).
+          it also should be mounted before the App component where the actions will be called.
+        */}
+        <HooksWrapper />
+        <App />
+      </Router>
+    </Provider>
+  )
 }
 ```
 
-you can find the redux sandbox example [here](https://codesandbox.io/s/redux-with-hooks-in-callback-bzzjb?file=/src/actions.js)
+You can find the redux sandbox example [here](https://codesandbox.io/s/redux-with-hooks-in-callback-bzzjb?file=/src/actions.js)
 
 Try it out!
