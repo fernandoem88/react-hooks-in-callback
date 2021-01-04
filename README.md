@@ -107,47 +107,6 @@ const Field = (name: string) => {
 
 Check the **formik with hooks-in-callback** example [here](https://codesandbox.io/s/formik-with-hooks-in-callback-jeo4i?file=/src/Field.js)
 
-## Waiting for a specific state before resolving the getHookState
-
-sometimes your expected hook state is not the first provided one and you should wait for a specific state before resolving the **getHookState** value.
-
-For example this following hooks returns the total number of divs in the DOM, but initially returns _undefined_.
-
-```typescript
-const useDivCount = () => {.
-  const [state, setState] = useState<number>();
-  useEffect(() => {
-    const divs = document.querySelectorAll("div");
-    setState(divs?.length || 0);
-  }, []);
-  return state; // undefined | number
-};
-```
-
-So in this case what we want to do is to skip the undefined value and wait for the number value.
-
-```typescript
-const hookState = await getHookState(
-  useDivCount,
-  (state, utils) => {
-    if (state !== undefined) {
-      utils.resolve(state)
-      return
-    }
-    if (utils.isBeforeUnmount) {
-      // this should not happen normally, but if it happens and
-      // you did not resolve the getHookState and some how you are unmounting the component
-      // you should do something to not keep this promise in pending state
-      // resolve your state or
-      // use utils.reject or throw some error
-    }
-  },
-  'useDivCount' // (optional) This parameter is just for debugging purpose,so you can check which hook is still mounted in react dev tools in your browser
-)
-```
-
-Find and advanced example [here](https://codesandbox.io/s/waiting-for-a-specific-state-ilqtv?file=/src/UserPass.js)
-
 ## use createActionUtils instead of redux-thunk
 
 A place where we usually use hooks states is in a **redux-thunk** action.
@@ -307,3 +266,46 @@ export const Root = () => {
 You can find the redux sandbox example [here](https://codesandbox.io/s/redux-with-hooks-in-callback-bzzjb?file=/src/actions.js)
 
 Try it out!
+
+# Advanced
+
+## Waiting for a specific state before resolving the getHookState
+
+sometimes your expected hook state is not the first provided one and you should wait for a specific state before resolving the **getHookState** value.
+
+For example this following hooks returns the total number of divs in the DOM, but initially returns _undefined_.
+
+```typescript
+const useDivCount = () => {.
+  const [state, setState] = useState<number>();
+  useEffect(() => {
+    const divs = document.querySelectorAll("div");
+    setState(divs?.length || 0);
+  }, []);
+  return state; // undefined | number
+};
+```
+
+So in this case what we want to do is to skip the undefined value and wait for the number value.
+
+```typescript
+const hookState = await getHookState(
+  useDivCount,
+  (state, utils) => {
+    if (state !== undefined) {
+      utils.resolve(state)
+      return
+    }
+    if (utils.isBeforeUnmount) {
+      // this should not happen normally, but if it happens and
+      // you did not resolve the getHookState and some how you are unmounting the component
+      // you should do something to not keep this promise in pending state
+      // resolve your state or
+      // use utils.reject or throw some error
+    }
+  },
+  'useDivCount' // (optional) This parameter is just for debugging purpose,so you can check which hook is still mounted in react dev tools in your browser
+)
+```
+
+Find and advanced example [here](https://codesandbox.io/s/waiting-for-a-specific-state-ilqtv?file=/src/UserPass.js)
