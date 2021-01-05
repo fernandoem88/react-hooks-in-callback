@@ -14,15 +14,17 @@ export const createStore = () => {
   let isBoundToAnHandler = false
   const bindToHooksHandler = (handlerId: string) => {
     if (boundState.handlerId)
-      throw new Error('there is already a HooksConsummer bound to this store')
+      throw new Error('there is already a HooksHandler bound to this store')
     boundState.handlerId = handlerId
     isBoundToAnHandler = true
   }
   const unbindToHooksHandler = (handlerId: string) => {
-    if (boundState.handlerId !== handlerId)
+    if (boundState.handlerId !== handlerId) {
+      console.log('expected', boundState.handlerId, 'but got', handlerId)
       throw new Error(
         'unbindToHooksHandler cannot be executed: incorrect handlerId'
       )
+    }
     boundState.handlerId = undefined
     isBoundToAnHandler = false
   }

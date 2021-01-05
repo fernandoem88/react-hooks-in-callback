@@ -4,12 +4,10 @@
  * December 2020.
  * react-hooks-in-callback
  * @description
- * filter out useless hooks mounted in component in order to be used only for actions
- * benefices:
+ * - isolate noisy hooks (unwanted re-renders) from your component
  * - you can use your own hooks in each callback:
  * for example useDispatch, useHistory, etc. without affecting your component.
- * - any changes regarding a react hook will be done in one place, no need to pass hook values as parameters.
- * - mount hooks in callback, get hooks state, unmount hooks and use its state in your callback
+ * - in an async action, any changes regarding a react hook will be done in one place, no need to pass hook values as parameters.
  * @example
  * const useActionUtils = () => {
  *    const history = useHistory()
