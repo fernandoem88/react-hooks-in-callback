@@ -5,8 +5,9 @@
 node_modules
 
 # builds
-build
-dist
+/example
+/build
+/dist
 .rpt2_cache
 
 # misc
