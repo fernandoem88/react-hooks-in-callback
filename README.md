@@ -2,9 +2,10 @@
 
 when it comes to deal with action or event callback, often we use to define a hook in a component and then we pass its state as parameter to the callback.
 
-using _hooks in callback_ can help us:
+using **hooks in callback** will help us:
 
-- filtering out some unwanted re-render noise due to useless hooks.
+- defining a hook and get its state directly in a callback
+- filtering out some unwanted hooks re-render noise.
 - having a simplified version of async actions (a really nice alternative to _redux-thunk_).
 
 ## Usage
@@ -14,7 +15,7 @@ import { useHooksInCallback } from "react-hooks-in-callback";
 import { useMyCustomHook } from "./my-custom-hooks";
 ... // here is the component body
 const [HooksWrapper, getHookState] = useHooksInCallback();
-// HooksWrapper: like a portal, is a React component where your hooks will be mounted.
+// HooksWrapper: is a React component where your hooks will be mounted.
 // getHookState: an helper that let you get the hook state in an async way.
 ...
 return (
@@ -308,4 +309,4 @@ const hookState = await getHookState(
 )
 ```
 
-Find and advanced example [here](https://codesandbox.io/s/waiting-for-a-specific-state-ilqtv?file=/src/UserPass.js)
+Find an advanced example [here](https://codesandbox.io/s/waiting-for-a-specific-state-ilqtv?file=/src/UserPass.js)

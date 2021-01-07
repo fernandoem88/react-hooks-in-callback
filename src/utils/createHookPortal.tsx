@@ -30,7 +30,7 @@ import HooksHandler from '../components/HooksHandler'
 import { shallowEqual } from 'shallow-utils'
 import useForceUpdate from '../hooks/useForceUpdate'
 // eslint-disable-next-line
-import { ResolverUtils } from 'react-hooks-in-callback'
+import { Resolver } from 'react-hooks-in-callback'
 
 const copy = <V,>(value: V) => produce(value, () => {}) as V
 
@@ -93,19 +93,16 @@ export const createActionUtils = <Config extends {}>(
   }
 
   const store = createStore()
-
-  type Resolver<State> = (state: State, utils: ResolverUtils<State>) => void
   const getHookState = <Hook extends () => any>(
     hook: Hook,
-    resolver?: Resolver<ReturnType<Hook>>, // (state: ReturnType<Hook>) => boolean = () => true,
+    resolver?: Resolver<ReturnType<Hook>>,
     name?: string
   ) => {
-    type State = ReturnType<Hook>
     const useProvidedHook = hook
     let resolved = false
     const hookName = name
 
-    return new Promise<State>((resolve, reject) => {
+    return new Promise<ReturnType<Hook>>((resolve, reject) => {
       let mounted = true
       const doUnmount = () => {
         if (mounted) {
@@ -121,7 +118,10 @@ export const createActionUtils = <Config extends {}>(
           doResolve(state, true)
         })
       }
-      const doResolve = (state: State, isBeforeUnmount: boolean = false) => {
+      const doResolve = (
+        state: ReturnType<Hook>,
+        isBeforeUnmount: boolean = false
+      ) => {
         if (!resolver) {
           resolved = true
           resolve(state)
@@ -143,12 +143,12 @@ export const createActionUtils = <Config extends {}>(
         })
       }
 
-      let getState = () => undefined as State
+      let getState = () => undefined as ReturnType<Hook>
       /**
        * @description
        */
       const useHooksWrapper = () => {
-        const state = useProvidedHook() as State
+        const state = useProvidedHook() as ReturnType<Hook>
         getState = () => state
         useEffect(() => {
           // execute doResolve for every state
