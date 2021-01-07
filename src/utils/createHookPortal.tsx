@@ -30,11 +30,11 @@ import HooksHandler from '../components/HooksHandler'
 import { shallowEqual } from 'shallow-utils'
 import useForceUpdate from '../hooks/useForceUpdate'
 // eslint-disable-next-line
-import { Resolver } from 'react-hooks-in-callback'
+import { Resolver } from 'types'
 
 const copy = <V,>(value: V) => produce(value, () => {}) as V
 
-export const createActionUtils = <Config extends {}>(
+export const createActionUtils = <Config extends Record<any, any>>(
   config: Config
   // options?: {
   //   persistable?: {
