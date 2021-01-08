@@ -1,25 +1,30 @@
 /**
  * @author Fernando Ekutsu Mondele,
  * Senior Frontend Developer at Testbirds GMBH, Munich
+ * vs_fernando@yahoo.fr
  * December 2020.
  * react-hooks-in-callback
  * @description
- * - isolate noisy hooks (unwanted re-renders) from your component
- * - you can use your own hooks in each callback:
- * for example useDispatch, useHistory, etc. without affecting your component.
- * - in an async action, any changes regarding a react hook will be done in one place, no need to pass hook values as parameters.
+ * - isolate noisy hooks (unwanted re-renders) from your components
+ * - use custom hooks in each callback:
+ * for example useDispatch, useHistory, useFormikContext, etc.
+ * without affecting your component.
+ * - in each action/callback, any changes regarding a react hook will be done in one place, no need to pass hook values as parameters.
  * @example
+ * // declare a custom hook
  * const useActionUtils = () => {
  *    const history = useHistory()
  *    const { getState, dispatch } = useStore();
- *  return { history, dispatch, getState };
+ *    return { history, dispatch, getState };
  * }
+ * // use your custom hook in a callback
  * const actionTest = async () => {
  *    const { dispatch, history } = await getHookState(useActionUtils);
  *    history.push("/test")
- *    dispatch({type: "test"});
- *    dispatch({type: "test2"});
+ *    dispatch({ type: "test" });
+ *    dispatch({ type: "test2" });
  * }
+ *
  */
 import React, { useEffect, useRef, useCallback, useMemo } from 'react'
 import { Subject } from 'rxjs'
