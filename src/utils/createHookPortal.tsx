@@ -6,10 +6,10 @@
  * react-hooks-in-callback
  * @description
  * - isolate noisy hooks (unwanted re-renders) from your components
- * - use custom hooks in each callback:
+ * - use hooks values in your callbacks
  * for example useDispatch, useHistory, useFormikContext, etc.
- * without affecting your component.
- * - in each action/callback, any changes regarding a react hook will be done in one place, no need to pass hook values as parameters.
+ * - in each action/callback, any changes regarding a react hook will be done in one place,
+ * and will be transparent for your components.
  * @example
  * // declare a custom hook
  * const useActionUtils = () => {
