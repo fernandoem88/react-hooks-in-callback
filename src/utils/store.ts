@@ -20,10 +20,14 @@ export const createStore = () => {
   }
   const unbindToHooksHandler = (handlerId: string) => {
     if (boundState.handlerId !== handlerId) {
-      console.log('expected', boundState.handlerId, 'but got', handlerId)
-      throw new Error(
-        'unbindToHooksHandler cannot be executed: incorrect handlerId'
+      // throw new Error(
+      //   'unbindToHooksHandler cannot be executed: incorrect handlerId'
+      // )
+      console.error(
+        "unbindToHooksHandler cannot be executed: incorrect handlerId'"
       )
+      console.log('expected', boundState.handlerId, 'but got', handlerId)
+      return
     }
     boundState.handlerId = undefined
     isBoundToAnHandler = false
