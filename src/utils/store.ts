@@ -30,9 +30,9 @@ export const createStore = () => {
   }
   $store.subscribe((action) => {
     if (action.type === 'BIND_TO_HOOKS_HANDLER') {
-      bindToHooksHandler(action.payload)
+      bindToHooksHandler(action.payload.handlerId)
     } else if (action.type === 'UNBIND_TO_HOOKS_HANDLER') {
-      unbindToHooksHandler(action.payload)
+      unbindToHooksHandler(action.payload.handlerId)
     }
   })
 

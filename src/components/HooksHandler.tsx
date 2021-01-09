@@ -23,7 +23,7 @@ const HooksHandler: React.FC<Props> = React.memo(function HooksHandler(props) {
         payload: { handlerId }
       })
     }
-  }, [dispatch])
+  }, [])
 
   const channelNamesRef = useRef({} as Dictionary<string | undefined>)
   useEffect(() => {
