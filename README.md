@@ -1,12 +1,12 @@
 # React hooks in callback
 
-when it comes to deal with action or event callback, often we use to define a hook in a component and then we pass its state as parameter to the callback.
+> When it comes to deal with action or event callback, often we use to define a hook in a component and then we pass its state as parameter to the callback.
 
-using **hooks in callback** will help us:
+this package will help us:
 
-- filtering out unwanted hooks re-renders: (using createCleanContext/useContextSelector in the component, getHookState in a callback or subscribeToHookState in useEffect).
-- defining a hook and get its state directly in a callback (usefull for action callbacks)
-- having a simplified version of async actions (a really nice alternative to _redux-thunk_).
+- to filter out unwanted hooks re-renders.
+- to define a hook and get its state directly in a callback (usefull for actions)
+- to have a simplified version of async actions (a really nice alternative to _redux-thunk_).
 
 ## Usage
 
@@ -14,9 +14,10 @@ using **hooks in callback** will help us:
 import { useHooksInCallback } from "react-hooks-in-callback";
 import { useMyCustomHook } from "./my-custom-hooks";
 ... // here is the component body
-const [HooksWrapper, getHookState] = useHooksInCallback();
+const [HooksWrapper, getHookState, subscribeToHookState] = useHooksInCallback();
 // HooksWrapper: is a React component where your hooks will be mounted.
 // getHookState: an helper that let you get the hook state in an async way.
+// subscribeToHookState: same as getHookState, but designed to work with useEffect
 ...
 return (
     <div>
@@ -110,7 +111,7 @@ Check the **formik with hooks-in-callback** example [here](https://codesandbox.i
 
 ## createCleanContext
 
-this helper creates a context and returns an object with with this following signature
+this helper creates a context and returns an object with this following signature
 
 ```tsx
 type CleanContext<T> = {
@@ -386,33 +387,23 @@ you can also subscribe to state changes in useEffect using subscribeToHookState
 ```typescript
 const [HooksWrapper, , subscribeToHookState] = useHooksInCallback()
 useEffect(() => {
-  const unsubscribe = subscribeToHookState(
+  const subscription = subscribeToHookState(
     useDivCount,
     (state, isBeforeUnmount) => {
-      //
+      // subscriber logic goes here
     },
     'useDivCount'
   )
-  return unsubscribe
+  return subscription.unsubscribe
 }, [])
-const hookState = await getHookState(
-  useDivCount,
-  (state, utils) => {
-    if (state !== undefined) {
-      utils.resolve(state)
-      return
-    }
-  },
-  'useDivCount' // (optional) This parameter is just for debugging purpose,so you can check which hook is still mounted in react dev tools in your browser
-)
 ```
 
 Find an advanced example [here](https://codesandbox.io/s/waiting-for-a-specific-state-ilqtv?file=/src/UserPass.js)
 
 ## Github
 
-[react-hooks-in-callback](https://github.com/fernandoem88/react-redux-selector-utils/tree/master)
+[react-hooks-in-callback](https://github.com/fernandoem88/react-hooks-in-callback)
 
 ## see also
 
-- [react-redux-selector-utils](https://www.npmjs.com/package/react-redux-selector-utils): a package that will help you to define in a **clean**, **easy** and **fast** way your redux selectors
+- [react-redux-selector-utils](https://www.npmjs.com/package/react-redux-selector-utils): a package that will help you to define and use in a **clean**, **easy** and **fast** way your redux selectors
