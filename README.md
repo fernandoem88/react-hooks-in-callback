@@ -148,14 +148,14 @@ const { Provider, Consummer, useCleanContext } = createCleanContext(
 // so the expected behaviour is to render only once
 const Title = () => {
   console.log('title rerender')
-  const title = useContextSelector((ctx) => ctx.title)
+  const title = useCleanContext((ctx) => ctx.title)
   return <div>{title}</div>
 }
 
 // this component instead will rerender at each click event
 const Num = () => {
   console.log('num rerender')
-  const num = useContextSelector((ctx) => ctx.num)
+  const num = useCleanContext((ctx) => ctx.num)
   return <div>{num}</div>
 }
 
