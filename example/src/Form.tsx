@@ -2,14 +2,18 @@ import React from 'react'
 import { useFormikContext, Form, Formik } from 'formik'
 import { useHooksInCallback } from 'react-hooks-in-callback'
 import { MyField } from './Field'
+import { useContextSelector } from './App'
 
 const mainStyle = {}
 const h1Style = {}
 const btnStyle = {}
 const names = ['pippo', 'pluto', 'songolo', 'pakala']
 
-export const MyForm = () => {
+export const MyForm = React.memo(() => {
   const [HooksWrapper, getHookState] = useHooksInCallback()
+  const title = useContextSelector((ctx) => {
+    return ctx.title
+  })
   console.log('Form')
   return (
     <Formik
@@ -25,6 +29,7 @@ export const MyForm = () => {
     >
       <div>
         <HooksWrapper />
+        {title}
         <div style={mainStyle}>
           <h1 style={h1Style}>Formik test</h1>
           <button
@@ -45,4 +50,4 @@ export const MyForm = () => {
       </div>
     </Formik>
   )
-}
+})

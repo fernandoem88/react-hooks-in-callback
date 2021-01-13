@@ -309,4 +309,30 @@ const hookState = await getHookState(
 )
 ```
 
+you can also subscribe to state changes in useEffect using subscribeToHookState
+
+```typescript
+const [HooksWrapper, , subscribeToHookState] = useHooksInCallback()
+useEffect(() => {
+  const unsubscribe = subscribeToHookState(
+    useDivCount,
+    (state, isBeforeUnmount) => {
+      //
+    },
+    'useDivCount'
+  )
+  return unsubscribe
+}, [])
+const hookState = await getHookState(
+  useDivCount,
+  (state, utils) => {
+    if (state !== undefined) {
+      utils.resolve(state)
+      return
+    }
+  },
+  'useDivCount' // (optional) This parameter is just for debugging purpose,so you can check which hook is still mounted in react dev tools in your browser
+)
+```
+
 Find an advanced example [here](https://codesandbox.io/s/waiting-for-a-specific-state-ilqtv?file=/src/UserPass.js)

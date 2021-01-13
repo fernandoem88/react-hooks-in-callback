@@ -193,12 +193,46 @@ export const createActionUtils = <Config extends Record<any, any>>(
     }
   )
 
+  const subscribeToHookState = <Hook extends () => any>(
+    hook: Hook,
+    subscriber: (state: ReturnType<Hook>, isBeforeUnmount: boolean) => void,
+    hookName?: string
+  ) => {
+    let resolved = false
+    let subscribed = true
+    let resolve = () => {}
+    getHookState(
+      hook,
+      (state, utils) => {
+        resolve = () => {
+          if (!resolved) {
+            utils.resolve(state)
+          }
+          resolved = true
+        }
+        if (!resolved) {
+          subscriber(state, utils.isBeforeUnmount)
+        }
+        if (!subscribed || utils.isBeforeUnmount) {
+          resolve()
+        }
+      },
+      hookName
+    )
+    const unsubscribe = () => {
+      subscribed = false
+      resolve()
+    }
+    return { unsubscribe }
+  }
+
   const storeState = {
     getHookState,
     getConfig,
     setConfig,
     HooksWrapper,
-    useConfig
+    useConfig,
+    subscribeToHookState
   }
   return storeState
 }

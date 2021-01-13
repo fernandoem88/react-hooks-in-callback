@@ -3,10 +3,15 @@ import { createActionUtils } from '../utils/createHookPortal'
 
 const useHooksInCallback = () => {
   const [state] = useState(() => {
-    const { getHookState, HooksWrapper } = createActionUtils({})
-    return [HooksWrapper, getHookState] as [
+    const {
+      getHookState,
+      HooksWrapper,
+      subscribeToHookState
+    } = createActionUtils({})
+    return [HooksWrapper, getHookState, subscribeToHookState] as [
       typeof HooksWrapper,
-      typeof getHookState
+      typeof getHookState,
+      typeof subscribeToHookState
     ]
   })
   return state
