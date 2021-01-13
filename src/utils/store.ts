@@ -1,4 +1,4 @@
-import { Subject } from 'rxjs'
+import { Subject } from '../utils/helpers'
 import uniqid from 'uniqid'
 // eslint-disable-next-line
 import { StoreAction, Dictionary, Channel, StoreActionKeys } from 'types'

@@ -27,7 +27,7 @@
  *
  */
 import React, { useEffect, useRef, useCallback, useMemo } from 'react'
-import { Subject } from 'rxjs'
+import { Subject } from '../utils/helpers'
 
 import produce from 'immer'
 import { createStore } from './store'
@@ -38,7 +38,7 @@ import useForceUpdate from '../hooks/useForceUpdate'
 import { Resolver } from 'types'
 
 const copy = <V,>(value: V) => produce(value, () => {}) as V
-
+// const Subject = createSubject()
 export const createActionUtils = <Config extends Record<any, any>>(
   config: Config
   // options?: {
