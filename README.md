@@ -382,7 +382,7 @@ const hookState = await getHookState(
 )
 ```
 
-you can also subscribe to state changes in useEffect using subscribeToHookState
+you can also subscribe to state changes in useEffect using _subscribeToHookState_
 
 ```typescript
 const [HooksWrapper, , subscribeToHookState] = useHooksInCallback()
@@ -390,9 +390,9 @@ useEffect(() => {
   const subscription = subscribeToHookState(
     useDivCount,
     (state, isBeforeUnmount) => {
-      // subscriber logic goes here
+      // subscription logic goes here
     },
-    'useDivCount'
+    'useDivCountSubscription'
   )
   return subscription.unsubscribe
 }, [])
