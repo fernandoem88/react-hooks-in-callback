@@ -13,7 +13,7 @@ export const createCleanContext = <T extends any>(defaultValue: T) => {
   const { Provider: DefaultProvider, Consumer } = ctx
   let getState = () => (null as any) as T
   const { HooksWrapper, subscribeToHookState } = createActionUtils({})
-  const useContextSelector = <Selector extends (state: T) => any>(
+  const useCleanContext = <Selector extends (state: T) => any>(
     selector: Selector
   ) => {
     const [state, setState] = useState(() => {
@@ -64,6 +64,6 @@ export const createCleanContext = <T extends any>(defaultValue: T) => {
   const cleanCtx = { Provider, Consumer } as React.Context<T>
   return {
     ...cleanCtx,
-    useContextSelector
+    useCleanContext
   }
 }

@@ -4,8 +4,8 @@ when it comes to deal with action or event callback, often we use to define a ho
 
 using **hooks in callback** will help us:
 
-- defining a hook and get its state directly in a callback
-- filtering out some unwanted hooks re-render noise.
+- filtering out unwanted hooks re-renders: (using createCleanContext/useContextSelector in the component, getHookState in a callback or subscribeToHookState in useEffect).
+- defining a hook and get its state directly in a callback (usefull for action callbacks)
 - having a simplified version of async actions (a really nice alternative to _redux-thunk_).
 
 ## Usage
@@ -107,6 +107,78 @@ const Field = (name: string) => {
 ```
 
 Check the **formik with hooks-in-callback** example [here](https://codesandbox.io/s/formik-with-hooks-in-callback-jeo4i?file=/src/Field.js)
+
+## createCleanContext
+
+this helper creates a context and returns an object with with this following signature
+
+```tsx
+type CleanContext<T> = {
+  Provider: Context.Provider<T>
+  Consummer: Context.Consummer<T>
+  useCleanContext: <R>(selector: (ctx: T) => R) => R
+}
+```
+
+The Provider and the Consummer behave the same way as in the standard react context.
+The most important part here is the _useCleanContext_ hook, where
+we define the React.useContext but in a way to avoid rerenders.
+To do so, we subscribes to React.useContext state in useEffect (_in the advanced section, it's explanned how to subscribe to hook state_) instead of using it in the hook body.
+In this way, we can select only desired states from each update to update our hook value.
+
+we will use these variables the same way we use them with React.context
+
+```tsx
+import React, { useState } from 'react'
+import { createCleanContext } from 'react-hooks-in-callback'
+
+// let's define our context initial value
+const initialValue = {
+  num: 0, // we will increment num on click events
+  title: 'test' // tis value instead won't change
+}
+// we will use the Provider to dispatch new context value and useCleanContext
+// to select the desired part of the context we want to use
+const { Provider, Consummer, useCleanContext } = createCleanContext(
+  initialValue
+)
+
+// this is a component which value, title, never changes
+// so the expected behaviour is to render only once
+const Title = () => {
+  console.log('title rerender')
+  const title = useContextSelector((ctx) => ctx.title)
+  return <div>{title}</div>
+}
+
+// this component instead will rerender at each click event
+const Num = () => {
+  console.log('num rerender')
+  const num = useContextSelector((ctx) => ctx.num)
+  return <div>{num}</div>
+}
+
+// let's then use our Title and Num components here in the App component
+// wrapping them by the context Provider
+const App = (props) => {
+  const [ctx, setCtx] = useState(initialValue)
+  return (
+    <Provider value={ctx}>
+      <button
+        onClick={() => {
+          setCtx({ ...ctx, num: ctx.num + 1 })
+        }}
+      >
+        increment num
+      </button>
+      <Title />
+      <Num />
+    </Provider>
+  )
+}
+```
+
+you can replace the same example with the normal React.creacteContext and React.useContext to see how the Title component will bahave
 
 ## use createActionUtils instead of redux-thunk
 
@@ -336,3 +408,11 @@ const hookState = await getHookState(
 ```
 
 Find an advanced example [here](https://codesandbox.io/s/waiting-for-a-specific-state-ilqtv?file=/src/UserPass.js)
+
+## Github
+
+[react-hooks-in-callback](https://github.com/fernandoem88/react-redux-selector-utils/tree/master)
+
+## see also
+
+- [react-redux-selector-utils](https://www.npmjs.com/package/react-redux-selector-utils): a package that will help you to define in a **clean**, **easy** and **fast** way your redux selectors

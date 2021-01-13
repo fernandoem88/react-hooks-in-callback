@@ -2,7 +2,7 @@ import React from 'react'
 import { useFormikContext, Form, Formik } from 'formik'
 import { useHooksInCallback } from 'react-hooks-in-callback'
 import { MyField } from './Field'
-import { useContextSelector } from './App'
+import { useCleanContext } from './App'
 
 const mainStyle = {}
 const h1Style = {}
@@ -11,7 +11,7 @@ const names = ['pippo', 'pluto', 'songolo', 'pakala']
 
 export const MyForm = React.memo(() => {
   const [HooksWrapper, getHookState] = useHooksInCallback()
-  const title = useContextSelector((ctx) => {
+  const title = useCleanContext((ctx) => {
     return ctx.title
   })
   console.log('Form')
