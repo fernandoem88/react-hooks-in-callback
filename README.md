@@ -1,7 +1,9 @@
 # React hooks in callback
 
-> if you are looking for a solution to avoid context undesired rerenders, in order to improve your components's performance,
+> if you are looking for a solution to avoid context undesired rerenders in order to improve your components's performance,
+
 > or you are just looking for a way to avoid defining useless and repetitive hooks in your component just to pass their values in a callback (eg: onclick or a redux-thunk action)
+
 > you are at the right place
 
 This package will help you:

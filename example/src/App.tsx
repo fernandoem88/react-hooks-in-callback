@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { MyForm } from './Form'
 
-import { createCleanContext } from 'react-hooks-in-callback'
+import { createContext } from 'react-hooks-in-callback'
 const ctxValue = { x: 1, title: 'pippo-test' }
-export const { Provider, useCleanContext } = createCleanContext(ctxValue)
+export const { Provider, useContextSelector } = createContext(ctxValue)
 
 export default () => {
   const [state, setState] = useState(ctxValue)
