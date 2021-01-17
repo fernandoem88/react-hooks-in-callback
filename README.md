@@ -108,7 +108,7 @@ const Field = (name: string) => {
 }
 ```
 
-The issue here is the re-render noise introduced by the formik context. everytime a field will be updated, all the other fields will re-render since they are using the same context. this will lead to a bad performance.
+The issue here is the re-render noise introduced by the formik context. everytime a field will be updated, all the other fields will re-render since they are using the same react context. this will lead to a bad performance.
 
 Check the **formik with context's re-render noise** example [here](https://codesandbox.io/s/formik-normal-5vchh?file=/src/Field.js)
 
@@ -132,7 +132,7 @@ const Field = (name: string) => {
 }
 ```
 
-Check the **formik with hooks-in-callback** example [here](https://codesandbox.io/s/formik-with-hooks-in-callback-jeo4i?file=/src/Field.js)
+Check the **formik with hooks-in-callback** example [here](https://codesandbox.io/s/formik-with-hooks-in-callback-jeo4i?file=/src/clean/Field.js)
 
 ## Create a clean context with createContext
 
