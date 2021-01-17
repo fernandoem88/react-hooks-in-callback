@@ -12,6 +12,7 @@ const names = ['pippo', 'pluto', 'songolo', 'pakala']
 export const MyForm = React.memo(() => {
   const [HooksWrapper, getHookState] = useHooksInCallback()
   const title = useContextSelector((ctx) => {
+    console.log('number', ctx.x)
     return ctx.title
   })
   console.log('Form')
