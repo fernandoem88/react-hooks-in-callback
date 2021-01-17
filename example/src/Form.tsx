@@ -9,7 +9,7 @@ const h1Style = {}
 const btnStyle = {}
 const names = ['pippo', 'pluto', 'songolo', 'pakala']
 
-export const MyForm = React.memo(() => {
+export const MyForm = React.memo(function MyForm() {
   const [HooksWrapper, getHookState] = useHooksInCallback()
   const title = useContextSelector((ctx) => {
     console.log('number', ctx.x)

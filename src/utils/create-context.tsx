@@ -1,6 +1,7 @@
 import React, { useEffect, useContext, useState, useRef } from 'react'
 import { shallowEqual } from 'shallow-utils'
 import { createActionUtils } from './createHookPortal'
+import { useForceUpdate } from '../hooks'
 
 export const createContext = <T extends any>(defaultValue: T) => {
   const ctx = React.createContext(defaultValue)
@@ -10,12 +11,27 @@ export const createContext = <T extends any>(defaultValue: T) => {
   const useContextSelector = <Selector extends (state: T) => any>(
     selector: Selector
   ) => {
-    const [state, setState] = useState(() => {
+    const [state] = useState(() => {
       return selector(getState())
     })
     const selectorRef = useRef(selector)
+    selectorRef.current = selector
     const stateRef = useRef(state)
-    stateRef.current = state
+    const shouldCheckEqualityInComponent = useRef(false)
+    if (shouldCheckEqualityInComponent.current) {
+      // when the component itself re-renders but not because of a context update
+      const newState = selector(getState())
+      const isEqual = shallowEqual(
+        { value: newState },
+        { value: stateRef.current }
+      )
+      if (!isEqual) {
+        stateRef.current = newState
+      }
+    } else {
+      shouldCheckEqualityInComponent.current = true
+    }
+    const forceUpdate = useForceUpdate()
     useEffect(() => {
       const useNoisyContext = () => {
         return useContext(ctx)
@@ -24,22 +40,25 @@ export const createContext = <T extends any>(defaultValue: T) => {
         useNoisyContext,
         (ctxState) => {
           const newState = selectorRef.current(ctxState)
-          // eslint-ignore-next-line
           const isEqual = shallowEqual(
-            { val: newState },
-            { val: stateRef.current }
+            { value: newState },
+            { value: stateRef.current }
           )
-
           if (isEqual) {
             return
           }
-          setState(newState)
+          // we already check the shallow equal here
+          shouldCheckEqualityInComponent.current = false
+          stateRef.current = newState
+          forceUpdate()
         },
-        'useNoisyContextSubscription'
+        'useReactContextInUseEffect'
       )
-      return subsc.unsubscribe
+      return () => {
+        subsc.unsubscribe()
+      }
     }, [])
-    return state as ReturnType<Selector>
+    return stateRef.current as ReturnType<Selector>
   }
   const Provider: React.FC<{ value: T }> = (props) => {
     getState = () => props.value
