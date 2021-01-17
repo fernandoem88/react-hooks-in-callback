@@ -60,6 +60,15 @@ declare module 'types' {
     name?: string | undefined
   ) => Promise<ReturnType<Hook>>
 
+  export interface CleanContext<T> {
+    Provider: React.Provider<T>
+    Consumer: React.Consumer<T>
+    displayName?: string | undefined
+    useContextSelector: <Selector extends (state: T) => any>(
+      selector: Selector
+    ) => ReturnType<Selector>
+  }
+
   export type GetConfig<Config = any> = () => Config
   export type SetConfig<Config> = (modify: (config: Config) => Config) => void
   export type HooksHandlerWrapper = React.FC<{ children?: undefined }>

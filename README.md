@@ -1,12 +1,20 @@
 # React hooks in callback
 
-> When it comes to deal with action or event callback, often we use to define a hook in a component and then we pass its state as parameter to the callback.
+> if you are looking for a solution to avoid context undesired rerenders, in order to improve your components's performance,
+> or you are just looking for a way to avoid defining useless and repetitive hooks in your component just to pass their values in a callback (eg: onclick or a redux-thunk action)
+> you are at the right place
 
-this package will help us:
+This package will help you:
 
-- to filter out unwanted hooks re-renders.
+- to filter out unwanted hooks re-renders (eg: React.context and all its related hooks).
 - to define a hook and get its state directly in a callback (usefull for actions)
-- to have a simplified version of async actions (a really nice alternative to _redux-thunk_).
+- to have a simplified version of async actions (a really nice alternative to _redux-thunk_)
+
+## Install
+
+```bash
+npm i -S react-hooks-in-callback
+```
 
 ## Usage
 
@@ -18,6 +26,21 @@ const [HooksWrapper, getHookState, subscribeToHookState] = useHooksInCallback();
 // HooksWrapper: is a React component where your hooks will be mounted.
 // getHookState: an helper that let you get the hook state in an async way.
 // subscribeToHookState: same as getHookState, but designed to work with useEffect
+...
+// you can either use getHookState or subscribeToHookState, depending on your case
+...
+useEffect(() => {
+  // subscribing to useMyCustomHook state in useEffect
+  const subscription = subscribeToHookState(
+    useMyCustomHook, (state) => {
+      // subscription logic goes here
+    },
+  )
+  return () => {
+    // this is mandatory because it will also unmount the hook
+    subscription.unsubscribe()
+  }
+}, [])
 ...
 return (
     <div>
@@ -32,7 +55,7 @@ return (
 )
 ```
 
-## dispatch action on click event
+## Dispatch action on click event
 
 ```typescript
 import React from 'react'
@@ -109,53 +132,49 @@ const Field = (name: string) => {
 
 Check the **formik with hooks-in-callback** example [here](https://codesandbox.io/s/formik-with-hooks-in-callback-jeo4i?file=/src/Field.js)
 
-## createCleanContext
+## Create a clean context with createContext
 
-this helper creates a context and returns an object with this following signature
+The **createContext** _helper_ takes the context _initial value_ as parameter and returns an object with this following signature
 
 ```tsx
-type CleanContext<T> = {
-  Provider: Context.Provider<T>
-  Consummer: Context.Consummer<T>
-  useCleanContext: <R>(selector: (ctx: T) => R) => R
+type Contex<T> = {
+  Provider: React.Context.Provider<T>
+  Consummer: React.Context.Consummer<T>
+  useContextSelector: <R>(selector: (ctx: T) => R) => R
 }
 ```
 
-The Provider and the Consummer behave the same way as in the standard react context.
-The most important part here is the _useCleanContext_ hook, where
-we define the React.useContext but in a way to avoid rerenders.
-To do so, we subscribes to React.useContext state in useEffect (_in the advanced section, it's explanned how to subscribe to hook state_) instead of using it in the hook body.
-In this way, we can select only desired states from each update to update our hook value.
-
-we will use these variables the same way we use them with React.context
+The Provider and the Consummer behave the same way as in the standard _React.Context_.
+The most important part here is the _useContextSelector_ hook, which is a context state **selector** that rerenders only if the returned value changes.
+To get this kind of behaviour, we have to subscribe to React.useContext state in useEffect instead of using it in the hook body.
+In this way, we can pick only the desired states from each change to update our hook value.
 
 ```tsx
 import React, { useState } from 'react'
-import { createCleanContext } from 'react-hooks-in-callback'
+import { createContext } from 'react-hooks-in-callback'
 
 // let's define our context initial value
 const initialValue = {
   num: 0, // we will increment num on click events
   title: 'test' // tis value instead won't change
 }
-// we will use the Provider to dispatch new context value and useCleanContext
-// to select the desired part of the context we want to use
-const { Provider, Consummer, useCleanContext } = createCleanContext(
-  initialValue
-)
+// we will use the Provider to dispatch new context value and
+// the useContextSelector hook to pick only the desired part of the context
+// we want to use
+const { Provider, Consummer, useContextSelector } = createContext(initialValue)
 
-// this is a component which value, title, never changes
+// this is a component whos value, title, never changes
 // so the expected behaviour is to render only once
 const Title = () => {
   console.log('title rerender')
-  const title = useCleanContext((ctx) => ctx.title)
+  const title = useContextSelector((ctx) => ctx.title)
   return <div>{title}</div>
 }
 
 // this component instead will rerender at each click event
 const Num = () => {
   console.log('num rerender')
-  const num = useCleanContext((ctx) => ctx.num)
+  const num = useContextSelector((ctx) => ctx.num)
   return <div>{num}</div>
 }
 
@@ -392,7 +411,7 @@ useEffect(() => {
     (state, isBeforeUnmount) => {
       // subscription logic goes here
     },
-    'useDivCountSubscription'
+    'useDivCountSubscription' // (optional) This parameter is just for debugging purpose
   )
   return subscription.unsubscribe
 }, [])

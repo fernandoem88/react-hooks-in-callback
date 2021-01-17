@@ -1,19 +1,13 @@
-import React, {
-  createContext,
-  useEffect,
-  useContext,
-  useState,
-  useRef
-} from 'react'
+import React, { useEffect, useContext, useState, useRef } from 'react'
 import { shallowEqual } from 'shallow-utils'
 import { createActionUtils } from './createHookPortal'
 
-export const createCleanContext = <T extends any>(defaultValue: T) => {
-  const ctx = createContext(defaultValue)
+export const createContext = <T extends any>(defaultValue: T) => {
+  const ctx = React.createContext(defaultValue)
   const { Provider: DefaultProvider, Consumer } = ctx
   let getState = () => (null as any) as T
   const { HooksWrapper, subscribeToHookState } = createActionUtils({})
-  const useCleanContext = <Selector extends (state: T) => any>(
+  const useContextSelector = <Selector extends (state: T) => any>(
     selector: Selector
   ) => {
     const [state, setState] = useState(() => {
@@ -64,6 +58,6 @@ export const createCleanContext = <T extends any>(defaultValue: T) => {
   const cleanCtx = { Provider, Consumer } as React.Context<T>
   return {
     ...cleanCtx,
-    useCleanContext
+    useContextSelector
   }
 }
