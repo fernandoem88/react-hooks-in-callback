@@ -139,9 +139,9 @@ Check the **formik with hooks-in-callback** example [here](https://codesandbox.i
 The **createContext** _helper_ takes the context _initial value_ as parameter and returns an object with this following signature
 
 ```tsx
-type Contex<T> = {
-  Provider: React.Context.Provider<T>
-  Consummer: React.Context.Consummer<T>
+type CleanContex<T> = {
+  Provider: React.Provider<T>
+  Consummer: React.Consummer<T>
   useContextSelector: <R>(selector: (ctx: T) => R) => R
 }
 ```
