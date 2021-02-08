@@ -31,19 +31,6 @@ const [HooksWrapper, getHookState, subscribeToHookState] = useHooksInCallback();
 ...
 // you can either use getHookState or subscribeToHookState, depending on your case
 ...
-useEffect(() => {
-  // subscribing to useMyCustomHook state in useEffect
-  const subscription = subscribeToHookState(
-    useMyCustomHook, (state) => {
-      // subscription logic goes here
-    },
-  )
-  return () => {
-    // this is mandatory because it will also unmount the hook
-    subscription.unsubscribe()
-  }
-}, [])
-...
 return (
     <div>
         {/* useMyCustomHook will be mounted in HooksWrapper */}
@@ -241,7 +228,7 @@ export const useActionUtils = () => {
 
 // this is similar to applyMiddleware(thunk.withExtraArgument(configs))
 export const utils = createActionUtils(configs);
-// Utils: { getHookState, getConfig, setConfig, useConfig, HooksWrapper }
+// Utils: { getHookState, getConfig, setConfig, useConfig, HooksWrapper, subscribeToHookState }
 ```
 
 Then we can define our **actions.ts** file and use our configs like this:
