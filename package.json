@@ -1,14 +1,15 @@
 {
   "name": "react-hooks-in-callback",
-  "version": "1.0.6",
+  "version": "1.0.7",
+  "homepage": "https://www.linkedin.com/in/fernando-ekutsu-mondele-67405484/",
   "author": {
     "name": "Fernando Ekutsu Mondele",
     "email": "vs_fernando@yahoo.fr",
-    "url": "https://www.linkedin.com/in/fernando-ekutsu-mondele-67405484/"
+    "url": "https://github.com/fernandoem88"
   },
-  "description": "React hooks in callback",
+  "description": "use react hooks in callbacks to take out noisy, useless or repetitive hooks from your components body",
   "license": "MIT",
-  "repository": "/fernandoem88/react-hooks-in-callback",
+  "repository": "https://github.com/fernandoem88/react-hooks-in-callback",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
@@ -73,11 +74,12 @@
     "react",
     "hooks",
     "callback",
-    "rerender",
+    "react-hooks-in-callback",
+    "async",
+    "actions",
     "performance",
     "redux",
-    "thunk",
-    "redux-thunk"
+    "thunk"
   ],
   "files": [
     "dist"
