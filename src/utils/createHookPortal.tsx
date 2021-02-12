@@ -26,7 +26,7 @@
  * }
  *
  */
-import React, { useEffect, useRef, useCallback, useMemo } from 'react'
+import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react'
 import { Subject } from '../utils/helpers'
 
 import produce from 'immer'
@@ -67,34 +67,55 @@ export const createActionUtils = <Config extends Record<any, any>>(
     configState.state = newConfig as Config
     $config.next({ type: 'CONFIG_UPDATED' })
   }
+
   const useConfig = <R extends any = Config>(
     selector: (config: Config) => R = ((config: Config) => config) as any
   ) => {
+    const [initialState] = useState(() => {
+      return selector(getConfig())
+    })
     const forceUpdate = useForceUpdate()
+    const selectorRef = useRef(selector)
+    selectorRef.current = selector
+    const stateRef = useRef({ value: initialState })
+
+    const checkUpdate = useCallback((config?: Config) => {
+      const newState = selectorRef.current(config || getConfig())
+      const isEqual = shallowEqual(
+        { value: newState },
+        { value: stateRef.current.value }
+      )
+      if (isEqual) {
+        return false
+      }
+      stateRef.current = { value: produce(newState, () => {}) as any }
+      return true
+    }, [])
+
+    const shouldCheckEqualityInComponent = useRef(false)
+    if (shouldCheckEqualityInComponent.current) {
+      // when the component itself re-renders but not because of a context update
+      checkUpdate()
+    } else {
+      shouldCheckEqualityInComponent.current = true
+    }
+
     useEffect(() => {
-      // side effects
-      const sub = $config.subscribe((action: any) => {
-        if (action.type === 'CONFIG_UPDATED') {
-          const newConfig = getConfig()
-          const isEqual = shallowEqual(newConfig, stateRef.current)
-          if (isEqual) return
-          stateRef.current = newConfig
+      const doUpdate = () => {
+        const shouldUpdate = checkUpdate()
+        if (shouldUpdate) {
+          // we already check the shallow equal here
+          shouldCheckEqualityInComponent.current = false
           forceUpdate()
         }
-      })
-      // cleanup
+      }
+      const subscription = $config.subscribe(doUpdate)
+      doUpdate() // first update
       return () => {
-        sub.unsubscribe()
+        subscription.unsubscribe()
       }
     }, [forceUpdate])
-
-    const selectConfig = useCallback(selector, [])
-    const stateRef = useRef<Config>()
-    const newConfig = stateRef.current
-    return useMemo(() => selectConfig(newConfig || getConfig()), [
-      newConfig,
-      selectConfig
-    ]) as R
+    return stateRef.current.value as ReturnType<typeof selector>
   }
 
   const store = createStore()
