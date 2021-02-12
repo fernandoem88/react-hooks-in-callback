@@ -1,11 +1,11 @@
 # React hooks in callback
 
-> using hooks in callbacks in some cases will be helpful to filter out noisy hooks and in other cases to avoid defining useless and repetitive hooks in your component just to pass their values to a callback
+> using hooks in callbacks will be helpful in some cases to filter out noisy hooks and in other cases to avoid defining useless and repetitive hooks in our components just to pass their values to those callbacks
 
 so, This package will help us
 
 - **to filter out unwanted hooks re-renders** (eg: react context related hooks, hooks with timeout or time interval, etc...).
-- **to have a simplified version of async actions** (that will allow us to have a really nice alternative to _redux-thunk_ approach)
+- **to have a simplified version of async actions** (that will allow us to have a really nice alternative to the _redux-thunk_ approach)
 
 [![NPM](https://img.shields.io/npm/v/react-hooks-in-callback.svg)](https://www.npmjs.com/package/react-hooks-in-callback)
 
