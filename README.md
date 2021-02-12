@@ -89,18 +89,18 @@ Check the **formik with hooks-in-callback** example [here](https://codesandbox.i
 A place where we usually use hooks states is in a _redux-thunk_ action.
 the reason to use the **react-hooks-in-callback** approach instead is because it brings some benefits.
 
-- **your action has only one callback layer** (const myAction = async () => {} : **not a curry function like in redux-thunk action**)
-- **hooks based params are not defined anymore in the component but directly in the action callback**: just think if you have a login action and you need to change it in a way to push _/login_ on start and _/home_ on success, you need to have _history_ as parameter and define _const history = useHistory()_ in **every** component where your _login_ action will be used.
-- **filtering re-render noise as we saw earlier**.
+- **your action has only one callback layer**: not a curry function like in redux-thunk approach
+- **hooks based params are not defined anymore in the component but directly in the action callback**: just think if we have a login action and we need to change it in a way to push _/login_ on start and _/home_ on success, we need to have _history_ as parameter and define _const history = useHistory()_ in **every** component where our _login_ action will be used.
+- **filtering unwanted re-renders as we saw previously**
 
 ### usage
 
-first we need to create utilities for our async actions
+first of all, we need to create utilities for our async actions
 
 ```ts
 import { createActionUtils } from 'react-hooks-in-callback'
 
-export const utils = createActionUtils(configs) // configs is an object with whatever you want
+export const utils = createActionUtils(configs) // configs is an object with whatever we want
 // Utils: { HooksWrapper, getHookState, getConfig, setConfig, useConfig, subscribeToHookState }
 // HooksWrapper => Component to be mounted at the top level, directly under all used hooks contexts providers
 // getHookState => get your hook state in an async way in your action
@@ -139,7 +139,7 @@ export const useActionUtils = () => {
 }
 ```
 
-and use it in our actions
+and use it like follows
 
 ```ts
 import { utils } from './configs'
@@ -210,7 +210,7 @@ const App = () => {
 }
 ```
 
-instead if we used a _redux-thunk_ approach, we should define dispatch and history in our components to dispatch the login action and pass history as parameter
+just to compare both approaches, if we used a _redux-thunk_ way instead, we had to define _dispatch_ and _history_ in our components to dispatch the login action and pass history as parameter
 
 ```typescript
 import { utils } from './configs'
