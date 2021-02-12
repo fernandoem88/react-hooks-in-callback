@@ -26,7 +26,7 @@
  * }
  *
  */
-import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react'
+import React, { useEffect, useRef, useCallback, useState } from 'react'
 import { Subject } from '../utils/helpers'
 
 import produce from 'immer'
