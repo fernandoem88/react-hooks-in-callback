@@ -147,9 +147,11 @@ import { useActionUtils } from './hooks'
 
 const login = async (userId: string) => {
   // here we will mount useActionUtils in the HooksWrapper component and get its state in a promise
-  const { dispatch, history } = await utils.getHookState(useActionUtils)
+  const { dispatch, history, getState } = await utils.getHookState(
+    useActionUtils
+  )
+  // here we can use our action utils
   const configs = utils.getConfigs()
-
   try {
     history.push('/login')
     dispatch({ type: 'LoginStart' })
@@ -164,7 +166,7 @@ const login = async (userId: string) => {
     const { data: users } = await configs.api.getUsers(token)
     dispatch({ type: 'LoginSuccess', payload: users })
     // just to check if everything is fine, you can log your redux state here
-    // const storeState = utils.getState();
+    // const storeState = getState();
     // console.log(storeState)
   } catch (error) {
     dispatch({ type: 'LoginError', payload: error })
