@@ -113,6 +113,10 @@ export const utils = createActionUtils(configs) // configs is an object with wha
 then we need to mount the HooksWrapper to process our hooks states
 
 ```ts
+import { utils } from './configs'
+
+const { HooksWrapper } = utils
+
 const MyRootComponent = (props) => {
   return (
     <Provider store={store}>
@@ -151,7 +155,7 @@ const login = async (userId: string) => {
     useActionUtils
   )
   // here we can use our action utils
-  const configs = utils.getConfigs()
+  const configs = utils.getConfig()
   try {
     history.push('/login')
     dispatch({ type: 'LoginStart' })
@@ -217,7 +221,7 @@ just to compare both approaches, if we used a _redux-thunk_ way instead, we had 
 ```typescript
 import { utils } from './configs'
 import { login } from './actions'
-import { useYourCustomConfig } from './hooks'
+import { useConfigContext } from './hooks'
 
 const App = () => {
   // if we used a redux-thunk action we should need dispatch and history in our component like bellow
@@ -231,7 +235,7 @@ const App = () => {
     )
   }, [dispatch])
 
-  const token = useYourCustomConfig((config) => config.token)
+  const { token } = useConfigContext()
   if (!token) return <div>user not logged in</div>
 
   return <div>...</div>
@@ -304,7 +308,9 @@ Find an advanced example [here](https://codesandbox.io/s/waiting-for-a-specific-
 ## see also
 
 - [react-requests-manager](https://www.npmjs.com/package/react-requests-manager)
-
 - [react-context-selector](https://www.npmjs.com/package/react-context-selector)
+- [reselect-mapper](https://www.npmjs.com/package/reselect-mapper)
 
-- [react-redux-selector-utils](https://www.npmjs.com/package/react-redux-selector-utils)
+# License
+
+MIT © [https://github.com/fernandoem88/react-hooks-in-callback](https://github.com/fernandoem88/react-hooks-in-callback)
