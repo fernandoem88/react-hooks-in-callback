@@ -1,2 +1,2 @@
 export { useHooksInCallback } from '../hooks'
-export { createPackage } from './create-package'
+export { createActionsPackage } from './create-package'

@@ -19,7 +19,7 @@ npm i -S react-hooks-in-callback
 
 ```typescript
 import { useHooksInCallback } from "react-hooks-in-callback";
-import { useMyCustomHook } from "./my-custom-hooks";
+import { useYourCustomHook } from "./my-custom-hooks";
 ... // here is the component body
 const [HooksWrapper, getHookState, subscribeToHookState] = useHooksInCallback();
 // HooksWrapper: is a React component where your hooks will be mounted.
@@ -30,12 +30,12 @@ const [HooksWrapper, getHookState, subscribeToHookState] = useHooksInCallback();
 ...
 return (
     <div>
-        {/* useMyCustomHook will be mounted in HooksWrapper */}
+        {/* useYourCustomHook will be mounted in HooksWrapper */}
         <HooksWrapper />
         <button onClick={async () => {
-            // mount useMyCustomHook and wait for its state to be resolved.
-            const hookState = await getHookState(useMyCustomHook);
-            // after being resolved, useMyCustomHook is directly unmounted.
+            // mount useYourCustomHook and wait for its state to be resolved.
+            const hookState = await getHookState(useYourCustomHook);
+            // after being resolved, useYourCustomHook is directly unmounted.
         }}/>
     </div>
 )
@@ -84,7 +84,7 @@ const Field = (name: string) => {
 
 Check the **formik with hooks-in-callback** example [here](https://codesandbox.io/s/formik-with-hooks-in-callback-jeo4i?file=/src/clean/Field.js)
 
-## createActionUtils
+## useActionUtils
 
 A place where we usually use hooks states is in a _redux-thunk_ action.
 the reason to use the **react-hooks-in-callback** approach instead is because it brings some benefits.
@@ -98,15 +98,12 @@ the reason to use the **react-hooks-in-callback** approach instead is because it
 first of all, we need to create utilities for our async actions
 
 ```ts
-import { createActionUtils } from 'react-hooks-in-callback'
+import { createActionsPackage } from 'react-hooks-in-callback'
 
-export const utils = createActionUtils(configs) // configs is an object with whatever we want
-// Utils: { HooksWrapper, getHookState, getConfig, setConfig, useConfig, subscribeToHookState }
+export const utils = createActionsPackage()
+// Utils: { HooksWrapper, getHookState, subscribeToHookState }
 // HooksWrapper => Component to be mounted at the top level, directly under all used hooks contexts providers
 // getHookState => get your hook state in an async way in your action
-// getConfig => get the last config state
-// setConfig => set new config state and dispatch the new state to the useConfig hook
-// useConfig => use the last updated config state and rerender the component on new state
 // subscribeToHookState => subscribe to hooks state changes
 ```
 
@@ -146,7 +143,7 @@ export const useActionUtils = () => {
 and use it like follows
 
 ```ts
-import { utils } from './configs'
+import { utils, api } from './configs'
 import { useActionUtils } from './hooks'
 
 const login = async (userId: string) => {
@@ -159,16 +156,10 @@ const login = async (userId: string) => {
   try {
     history.push('/login')
     dispatch({ type: 'LoginStart' })
-
-    const { data: token } = await configs.api.login(userId)
-    // setConfig to modify the config value and dispatch the new state to the useConfig hook
-    utils.setConfig((cfg) => {
-      // cfg is our custom config: what we defined in configs.ts
-      cfg.token = token // we can access the cfg value by using useConfig in the component,
-    })
-    history.push('/home')
-    const { data: users } = await configs.api.getUsers(token)
+    const { data: token } = await api.login(userId)
+    const { data: users } = await api.getUsers(token)
     dispatch({ type: 'LoginSuccess', payload: users })
+    history.push('/home')
     // just to check if everything is fine, you can log your redux state here
     // const storeState = getState();
     // console.log(storeState)
@@ -208,9 +199,6 @@ const App = () => {
     // using react-hooks-in-callback approach!
     login('admin') // don't need to dispatch or to pass history
   }, [])
-  // we can use useConfig in our component to get some values.
-  const token = utils.useConfig((config) => config.token)
-  if (!token) return <div>user not logged in</div>
 
   return <div>...</div>
 }
@@ -234,9 +222,6 @@ const App = () => {
       login('admin', history)
     )
   }, [dispatch])
-
-  const { token } = useConfigContext()
-  if (!token) return <div>user not logged in</div>
 
   return <div>...</div>
 }
@@ -265,26 +250,22 @@ const useDivCount = () => {.
 };
 ```
 
-So in this case what we want to do is to skip the undefined value and wait for the number value.
+So in this case what we want to do is to skip the undefined value and wait for the number value. to do so, we just need to implement it by adding a _suspender_ as a second argument to the _getHookState_
 
 ```typescript
-const hookState = await getHookState(
-  useDivCount,
-  (state, utils) => {
-    if (state !== undefined) {
-      utils.resolve(state)
-      return
-    }
-    if (utils.isBeforeUnmount) {
-      // this should not happen normally, but if it happens and
-      // you did not resolve the getHookState and some how you are unmounting the component
-      // you should do something to not keep this promise in pending state
-      // resolve your state or
-      // use utils.reject or throw some error
-    }
-  },
-  'useDivCount' // (optional) This parameter is just for debugging purpose,so you can check which hook is still mounted in react dev tools in your browser
-)
+const hookState = await getHookState(useDivCount, (state, utils) => {
+  if (state !== undefined) {
+    utils.resolve(state)
+    return
+  }
+  if (utils.isBeforeUnmount) {
+    // this should not happen normally, but if it happens and
+    // you did not resolve the getHookState and some how you are unmounting the component
+    // you should do something to not keep this promise in pending state
+    // resolve your state or
+    // use utils.reject or throw some error
+  }
+})
 ```
 
 you can also subscribe to state changes in useEffect using _subscribeToHookState_
@@ -296,8 +277,7 @@ useEffect(() => {
     useDivCount,
     (state, isBeforeUnmount) => {
       // subscription logic goes here
-    },
-    'useDivCountSubscription' // (optional) This parameter is just for debugging purpose
+    }
   )
   return subscription.unsubscribe
 }, [])
@@ -308,8 +288,6 @@ Find an advanced example [here](https://codesandbox.io/s/waiting-for-a-specific-
 ## see also
 
 - [react-requests-manager](https://www.npmjs.com/package/react-requests-manager)
-- [react-context-selector](https://www.npmjs.com/package/react-context-selector)
-- [reselect-mapper](https://www.npmjs.com/package/reselect-mapper)
 
 # License
 

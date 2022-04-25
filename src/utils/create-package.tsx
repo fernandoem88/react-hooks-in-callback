@@ -8,10 +8,7 @@ export const uniqid = (str: string = '') => {
   return dateId + randmId
 }
 
-export const createPackage = () => {
-  const idsCtx = React.createContext<string[]>([])
-  const dispatchCtx = React.createContext<(action: Action) => void>(() => {})
-
+export const createActionsPackage = () => {
   const store: Store = {
     helpers: {} as Helpers,
     dispatch: () => {},
@@ -29,28 +26,46 @@ export const createPackage = () => {
 
   const getHookState = <S,>(
     hook: () => S,
-    waitUntil?: (state: S, isBeforeUnmount: boolean) => boolean
+    suspender?: (
+      state: S,
+      utils: {
+        resolve: (state: S) => void
+        isBeforeUnmount: boolean
+        reject: (err?: any) => void
+      }
+    ) => boolean
   ) => {
     const id = uniqid('hook--')
 
     let resolved = false
-    const hookPromise = new Promise<S>((resolve) => {
-      const resolver: Resolver = (value: any, isBeforeUnmount?: boolean) => {
-        const shouldResolve =
-          !!isBeforeUnmount ||
-          !waitUntil ||
-          waitUntil(value, isBeforeUnmount || false)
-        if (resolved || !shouldResolve) return
+    const hookPromise = new Promise<S>((resolve, reject) => {
+      const finalResolve = (value: S) => {
         resolved = true
         resolve(value)
-        store.dispatch({ type: 'DELETE', payload: id })
         store.helpers.deleteResolver(id)
-        delete store.hooks[id]
+        store.helpers.deleteHook(id)
+      }
+      const resolver: Resolver = (
+        value: any,
+        isBeforeUnmount: boolean = false
+      ) => {
+        if (resolved) {
+          return
+        }
+        if (suspender) {
+          suspender(value, {
+            resolve: finalResolve,
+            isBeforeUnmount,
+            reject
+          })
+          return
+        }
+        finalResolve(value)
       }
       store.helpers.setResolver(id, resolver)
     })
 
-    store.hooks[id] = hook
+    store.helpers.setHook(hook, id)
     store.dispatch({ type: 'ADD', payload: id })
 
     return hookPromise
@@ -94,11 +109,9 @@ export const createPackage = () => {
     return <Channels getStore={getStore} ids={ids} dispatch={dispatch} />
   }
 
-  const HooksWrapperMemo = React.memo(HooksWraper) as React.FC
-
-  return [HooksWrapperMemo, getHookState, subscribe] as [
-    HooksWrapper: React.FC,
-    getHookState: typeof getHookState,
-    subscribeToHookState: typeof subscribe
-  ]
+  return {
+    HooksWrapper: React.memo(HooksWraper) as React.FC,
+    getHookState,
+    subscribeToHookState: subscribe
+  }
 }

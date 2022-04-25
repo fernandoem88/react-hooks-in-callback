@@ -16,6 +16,7 @@ const Channels: React.FC<Props> = (props) => {
   const { ids, dispatch } = props
 
   useState(() => {
+    const store = props.getStore()
     const setResolver = (id: string, resolver: any) => {
       resolversRef.current[id] = resolver
     }
@@ -23,9 +24,10 @@ const Channels: React.FC<Props> = (props) => {
       return resolversRef.current[id]
     }
     const deleteResolver = (id: string) => {
+      store.dispatch({ type: 'DELETE', payload: id })
       delete resolversRef.current[id]
     }
-    const store = props.getStore()
+
     store.helpers.setResolver = setResolver
     store.helpers.getResolver = getResolver
     store.helpers.deleteResolver = deleteResolver
@@ -36,8 +38,8 @@ const Channels: React.FC<Props> = (props) => {
     const store = props.getStore()
     return ids.map((id) => (
       <Channel
-        id={id}
         key={id}
+        id={id}
         getHook={store.helpers.getHook}
         getResolver={store.helpers.getResolver}
       />

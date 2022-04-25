@@ -1,9 +1,13 @@
 import { useState } from 'react'
-import { createPackage } from '../utils/create-package'
+import { createActionsPackage } from '../utils/create-package'
 
 const useHooksInCallback = () => {
   const [state] = useState(() => {
-    const [getHookState, HooksWrapper, subscribeToHookState] = createPackage()
+    const {
+      getHookState,
+      HooksWrapper,
+      subscribeToHookState
+    } = createActionsPackage()
     return [HooksWrapper, getHookState, subscribeToHookState] as const
   })
   return state
