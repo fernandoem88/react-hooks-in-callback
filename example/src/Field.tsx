@@ -13,7 +13,7 @@ const font15 = { fontSize: 15 }
 const clickStyle = { fontWeight: 'bold', fontSize: 24 } as any
 const renderStyle = { ...clickStyle, color: 'red' } as any
 
-export const MyField = React.memo(({ name }: { name: string }) => {
+export const MyField = ({ name }: { name: string }) => {
   // let's remove formik context from the component
   // const formik = useFormikContext();
   // rerenderRef value is updated only when there is a render: so it's a passive value
@@ -50,4 +50,6 @@ export const MyField = React.memo(({ name }: { name: string }) => {
       </div>
     </div>
   )
-})
+}
+
+export default React.memo(MyField)

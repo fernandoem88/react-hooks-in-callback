@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState, useReducer } from 'react'
+import React from 'react'
 import { Store, Action, Resolver, Helpers } from 'app-types'
 import Channels from '../components/Channels'
 
@@ -96,15 +96,18 @@ export const createActionsPackage = () => {
         and should be mounted as first child in the components tree`
       )
     }
-    const [ids, dispatch] = useReducer((ids: string[], action: Action) => {
-      if (action.type === 'ADD') {
-        return [...ids, action.payload]
-      }
-      if (action.type === 'DELETE') {
-        return ids.filter((id) => id !== action.payload)
-      }
-      return ids
-    }, [])
+    const [ids, dispatch] = React.useReducer(
+      (ids: string[], action: Action) => {
+        if (action.type === 'ADD') {
+          return [...ids, action.payload]
+        }
+        if (action.type === 'DELETE') {
+          return ids.filter((id) => id !== action.payload)
+        }
+        return ids
+      },
+      []
+    )
 
     return <Channels getStore={getStore} ids={ids} dispatch={dispatch} />
   }

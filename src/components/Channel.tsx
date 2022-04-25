@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Resolver } from 'app-types'
 
 const Channel: React.FC<{
@@ -7,7 +7,7 @@ const Channel: React.FC<{
   getResolver: (id: string) => Resolver
 }> = (props) => {
   const { getHook, getResolver } = props
-  const [useHookState] = useState(() => {
+  const [useHookState] = React.useState(() => {
     return getHook(props.id)
   })
   const hookState = useHookState()
