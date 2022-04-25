@@ -1,15 +1,32 @@
 import React, { useState } from 'react'
-import { Store } from '../utils/store' // eslint-disable-line
+import { Resolver } from 'app-types'
 
 const Channel: React.FC<{
   id: string
-  getStore: () => Store
-  name: string
-}> = React.memo(function Channel(props) {
-  const [store] = useState(props.getStore)
-  const [useChannelHook] = useState(() => store.getChannelById(props.id).hook)
-  useChannelHook()
-  return <React.Fragment />
-})
+  getHook: (id: string) => () => any
+  getResolver: (id: string) => Resolver
+}> = (props) => {
+  const { getHook, getResolver } = props
+  const [useHookState] = useState(() => {
+    return getHook(props.id)
+  })
+  const hookState = useHookState()
 
-export default Channel
+  React.useEffect(() => {
+    const resolver = getResolver(props.id)
+    resolver(hookState)
+  }, [props.id, getResolver, hookState])
+
+  const hookStateRef = React.useRef(hookState)
+  hookStateRef.current = hookState
+
+  React.useEffect(() => {
+    return () => {
+      const resolver = getResolver(props.id)
+      resolver(hookStateRef.current, true)
+    }
+  }, [props.id, getResolver])
+  return null
+}
+
+export default React.memo(Channel)

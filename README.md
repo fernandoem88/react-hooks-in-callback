@@ -154,7 +154,7 @@ const login = async (userId: string) => {
   const { dispatch, history, getState } = await utils.getHookState(
     useActionUtils
   )
-  // here we can use our action utils
+
   const configs = utils.getConfig()
   try {
     history.push('/login')

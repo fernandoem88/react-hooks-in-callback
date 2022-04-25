@@ -1,80 +1,27 @@
-declare module 'types' {
+declare module 'app-types' {
   export interface Dictionary<T = any> {
     [K: string]: T
   }
-  export interface StoreActionPayloads {
-    /**
-     * @description sent to the provider to mount a new scope
-     */
-    MOUNT_CHANNEL: {
-      channelId: string
-      name?: string
-    }
-    ON_CHANNEL_MOUNTED: {
-      channelId: string
-    }
-    /**
-     * @description sent to the provider to unmount the scope
-     */
-    UNMOUNT_CHANNEL: {
-      channelId: string
-    }
 
-    NEW_CHANNEL_PARAMS: {
-      channelId: string
-      params: any[]
-    }
+  export type Resolver = <S>(state: S, force?: boolean) => void
 
-    NEW_CHANNEL_STATE: {
-      channelId: string
-      state: any
-    }
-
-    BIND_TO_HOOKS_HANDLER: { handlerId: string }
-    UNBIND_TO_HOOKS_HANDLER: { handlerId: string }
+  export interface Helpers {
+    getResolver: (id: string) => Resolver
+    setResolver: (id: string, resolver: Resolver) => void
+    deleteResolver: (id: string) => void
+    getHook: (id: string) => () => any
+    setHook: (hook: () => any, id: string) => void
+    deleteHook: (id: string) => void
   }
-  export type StoreActionKeys = keyof StoreActionPayloads
-  export interface StoreAction<K extends StoreActionKeys> {
-    type: K
-    payload: StoreActionPayloads[K]
+  export interface Action {
+    type: 'ADD' | 'DELETE'
+    payload: string
   }
-  export interface Channel {
-    id: string
-    hook: Function
-    name?: string
+  export interface Store {
+    helpers: Helpers
+    dispatch: (action: Action) => void
+    hooks: { [id: string]: () => any }
   }
-
-  //
-  export type ResolverUtils<State> = {
-    resolve: (state: State) => void
-    reject: (error: any) => void
-    isBeforeUnmount: boolean
-  }
-  export type Resolver<State> = (
-    state: State,
-    utils: ResolverUtils<State>
-  ) => void
-  export type GetHookState = <Hook extends () => any>(
-    hook: Hook,
-    resolver?: Resolver<ReturnType<Hook>> | undefined,
-    name?: string | undefined
-  ) => Promise<ReturnType<Hook>>
-
-  export interface CleanContext<T> {
-    Provider: React.Provider<T>
-    Consumer: React.Consumer<T>
-    displayName?: string | undefined
-    useContextSelector: <Selector extends (state: T) => any>(
-      selector: Selector
-    ) => ReturnType<Selector>
-  }
-
-  export type GetConfig<Config = any> = () => Config
-  export type SetConfig<Config> = (modify: (config: Config) => Config) => void
-  export type HooksHandlerWrapper = React.FC<{ children?: undefined }>
-  export type UseConfig<Config> = <R extends unknown = Config>(
-    selector?: ((config: Config) => R) | undefined
-  ) => R
 }
 
 declare module 'shallow-utils' {
