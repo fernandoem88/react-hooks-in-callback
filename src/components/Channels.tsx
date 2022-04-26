@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo, FC, memo, Fragment } from 'react'
+import React from 'react'
 import Channel from './Channel'
 
 import { Store, Resolver, Action } from 'app-types' // eslint-disable-line
@@ -10,12 +10,12 @@ interface Props {
   ids: string[]
 }
 
-const Channels: FC<Props> = (props) => {
-  const resolversRef = useRef<{ [id: string]: Resolver }>({})
+const Channels: React.FC<Props> = (props) => {
+  const resolversRef = React.useRef<{ [id: string]: Resolver }>({})
 
   const { ids, dispatch, getStore } = props
 
-  useState(() => {
+  React.useState(() => {
     const store = getStore()
     const addResolver = (id: string, resolver: any) => {
       resolversRef.current[id] = resolver
@@ -34,7 +34,7 @@ const Channels: FC<Props> = (props) => {
     store.dispatch = (action: any) => dispatch(action)
   })
 
-  const channels = useMemo(() => {
+  const channels = React.useMemo(() => {
     const store = getStore()
     return ids.map((id) => (
       <Channel
@@ -45,7 +45,7 @@ const Channels: FC<Props> = (props) => {
     ))
   }, [ids, getStore])
 
-  return <Fragment>{channels}</Fragment>
+  return <React.Fragment>{channels}</React.Fragment>
 }
 
-export default memo(Channels)
+export default React.memo(Channels)

@@ -1,7 +1,16 @@
 {
   "parser": "@typescript-eslint/parser",
   "plugins": ["react", "react-hooks", "prettier"],
-  "extends": ["react-app", "prettier"],
+  "extends": [
+    "react-app",
+    "prettier",
+    "standard",
+    "standard-react",
+    "plugin:prettier/recommended",
+    "prettier/standard",
+    "prettier/react",
+    "plugin:@typescript-eslint/eslint-recommended"
+  ],
   "env": {
     "node": true
   },
@@ -14,7 +23,7 @@
   },
   "settings": {
     "react": {
-      "version": "17"
+      "version": "16"
     }
   },
   "rules": {

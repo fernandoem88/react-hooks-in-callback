@@ -30,9 +30,9 @@ export const createActionsPackage = () => {
     suspender?: (
       state: S,
       utils: {
-        resolve: (state: S) => void
-        isBeforeUnmount: boolean
+        resolve: () => void
         reject: (err?: any) => void
+        isBeforeUnmount: boolean
       }
     ) => boolean
   ) => {
@@ -56,9 +56,9 @@ export const createActionsPackage = () => {
         }
         if (suspender) {
           suspender(value, {
-            resolve: finalResolve,
-            isBeforeUnmount,
-            reject
+            resolve: () => finalResolve(value),
+            reject,
+            isBeforeUnmount
           })
           return
         }
