@@ -18,6 +18,6 @@
     "allowSyntheticDefaultImports": true,
     "typeRoots": ["./src/typings"]
   },
-  "include": ["src"],
+  "include": ["./src"],
   "exclude": ["node_modules", "dist", "example"]
 }

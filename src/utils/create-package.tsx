@@ -1,6 +1,6 @@
 import React from 'react'
-import { Store, Action, Resolver, Helpers } from 'app-types'
-import Channels from '../components/Channels'
+import { Store, Resolver, Helpers } from 'app-types'
+import { HooksWrapper } from '../components/HooksWrapper'
 
 export const uniqid = (str: string = '') => {
   const dateId = str + new Date().getTime()
@@ -14,8 +14,9 @@ export const createActionsPackage = () => {
     dispatch: () => {},
     hooks: {}
   }
-  store.helpers.setHook = (hook, id) => {
+  store.helpers.addHook = (hook, id) => {
     store.hooks[id] = hook
+    store.dispatch({ type: 'ADD', payload: id })
   }
   store.helpers.getHook = (id) => {
     return store.hooks[id]
@@ -36,6 +37,7 @@ export const createActionsPackage = () => {
     ) => boolean
   ) => {
     const id = uniqid('hook--')
+    store.helpers.addHook(hook, id)
 
     let resolved = false
     const hookPromise = new Promise<S>((resolve, reject) => {
@@ -62,11 +64,8 @@ export const createActionsPackage = () => {
         }
         finalResolve(value)
       }
-      store.helpers.setResolver(id, resolver)
+      store.helpers.addResolver(id, resolver)
     })
-
-    store.helpers.setHook(hook, id)
-    store.dispatch({ type: 'ADD', payload: id })
 
     return hookPromise
   }
@@ -89,31 +88,9 @@ export const createActionsPackage = () => {
   }
 
   const getStore = () => store
-  const HooksWraper: React.FC<{ children?: undefined }> = (props) => {
-    if (props.children !== undefined) {
-      throw new Error(
-        `the HooksWrapper do not accept any children components
-        and should be mounted as first child in the components tree`
-      )
-    }
-    const [ids, dispatch] = React.useReducer(
-      (ids: string[], action: Action) => {
-        if (action.type === 'ADD') {
-          return [...ids, action.payload]
-        }
-        if (action.type === 'DELETE') {
-          return ids.filter((id) => id !== action.payload)
-        }
-        return ids
-      },
-      []
-    )
-
-    return <Channels getStore={getStore} ids={ids} dispatch={dispatch} />
-  }
 
   return {
-    HooksWrapper: React.memo(HooksWraper) as React.FC,
+    HooksWrapper: React.memo(() => <HooksWrapper getStore={getStore} />),
     getHookState,
     subscribeToHookState: subscribe
   }

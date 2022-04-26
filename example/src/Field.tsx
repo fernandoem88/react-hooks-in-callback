@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { useFormikContext } from 'formik'
-import { useHooksInCallback } from 'react-hooks-in-callback'
+import { createActionsPackage } from 'react-hooks-in-callback'
 
 const mainStyle = {
   padding: 2,
@@ -12,7 +12,7 @@ const mainStyle = {
 const font15 = { fontSize: 15 }
 const clickStyle = { fontWeight: 'bold', fontSize: 24 } as any
 const renderStyle = { ...clickStyle, color: 'red' } as any
-
+const { HooksWrapper, getHookState } = createActionsPackage()
 export const MyField = ({ name }: { name: string }) => {
   // let's remove formik context from the component
   // const formik = useFormikContext();
@@ -21,7 +21,7 @@ export const MyField = ({ name }: { name: string }) => {
   rerenderRef.current += 1
   // value is updated on each click event.
   const [value, setValue] = useState(() => 0)
-  const [HooksWrapper, getHookState] = useHooksInCallback()
+  // const [HooksWrapper, getHookState] = useHooksInCallback()
 
   return (
     <div

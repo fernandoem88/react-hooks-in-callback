@@ -7,10 +7,10 @@ declare module 'app-types' {
 
   export interface Helpers {
     getResolver: (id: string) => Resolver
-    setResolver: (id: string, resolver: Resolver) => void
+    addResolver: (id: string, resolver: Resolver) => void
     deleteResolver: (id: string) => void
     getHook: (id: string) => () => any
-    setHook: (hook: () => any, id: string) => void
+    addHook: (hook: () => any, id: string) => void
     deleteHook: (id: string) => void
   }
   export interface Action {

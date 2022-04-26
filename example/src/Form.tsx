@@ -1,17 +1,19 @@
 import React from 'react'
 import { useFormikContext, Form, Formik } from 'formik'
-import { useHooksInCallback } from 'react-hooks-in-callback'
+import {
+  // useHooksInCallback,
+  createActionsPackage
+} from 'react-hooks-in-callback'
 import { MyField } from './Field'
 
 const mainStyle = {}
 const h1Style = {}
 const btnStyle = {}
 const names = ['pippo', 'pluto', 'songolo', 'pakala']
-
+const { HooksWrapper, getHookState } = createActionsPackage()
 export const MyForm = function MyForm() {
-  const [HooksWrapper, getHookState] = useHooksInCallback()
+  // const [HooksWrapper, getHookState] = useHooksInCallback()
 
-  console.log('Form')
   return (
     <Formik
       initialValues={{ pippo: 0, pluto: 0, songolo: 0, pakala: 0 }}
@@ -24,8 +26,8 @@ export const MyForm = function MyForm() {
       }}
     >
       <div>
+        pippo
         <HooksWrapper />
-
         <div style={mainStyle}>
           <h1 style={h1Style}>Formik test</h1>
           <button

@@ -1,8 +1,8 @@
-import React from 'react'
+import { useState } from 'react'
 import { createActionsPackage } from '../utils/create-package'
 
 const useHooksInCallback = () => {
-  const [state] = React.useState(() => {
+  const [state] = useState(() => {
     const {
       getHookState,
       HooksWrapper,

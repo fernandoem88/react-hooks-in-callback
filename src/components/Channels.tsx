@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useState, useMemo, FC, memo, Fragment } from 'react'
 import Channel from './Channel'
 
 import { Store, Resolver, Action } from 'app-types' // eslint-disable-line
@@ -10,14 +10,14 @@ interface Props {
   ids: string[]
 }
 
-const Channels: React.FC<Props> = (props) => {
-  const resolversRef = React.useRef<{ [id: string]: Resolver }>({})
+const Channels: FC<Props> = (props) => {
+  const resolversRef = useRef<{ [id: string]: Resolver }>({})
 
-  const { ids, dispatch } = props
+  const { ids, dispatch, getStore } = props
 
-  React.useState(() => {
-    const store = props.getStore()
-    const setResolver = (id: string, resolver: any) => {
+  useState(() => {
+    const store = getStore()
+    const addResolver = (id: string, resolver: any) => {
       resolversRef.current[id] = resolver
     }
     const getResolver = (id: string) => {
@@ -28,25 +28,24 @@ const Channels: React.FC<Props> = (props) => {
       delete resolversRef.current[id]
     }
 
-    store.helpers.setResolver = setResolver
+    store.helpers.addResolver = addResolver
     store.helpers.getResolver = getResolver
     store.helpers.deleteResolver = deleteResolver
     store.dispatch = (action: any) => dispatch(action)
   })
 
-  const channels = React.useMemo(() => {
-    const store = props.getStore()
+  const channels = useMemo(() => {
+    const store = getStore()
     return ids.map((id) => (
       <Channel
         key={id}
-        id={id}
-        getHook={store.helpers.getHook}
-        getResolver={store.helpers.getResolver}
+        hook={store.helpers.getHook(id)}
+        resolver={store.helpers.getResolver(id)}
       />
     ))
-  }, [ids, props.getStore])
+  }, [ids, getStore])
 
-  return <React.Fragment>{channels}</React.Fragment>
+  return <Fragment>{channels}</Fragment>
 }
 
-export default React.memo(Channels)
+export default memo(Channels)

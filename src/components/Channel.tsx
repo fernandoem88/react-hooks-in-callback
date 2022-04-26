@@ -1,32 +1,27 @@
-import React from 'react'
+import { useEffect, useRef, FC, memo } from 'react'
 import { Resolver } from 'app-types'
 
-const Channel: React.FC<{
-  id: string
-  getHook: (id: string) => () => any
-  getResolver: (id: string) => Resolver
+const Channel: FC<{
+  hook: () => any
+  resolver: Resolver
 }> = (props) => {
-  const { getHook, getResolver } = props
-  const [useHookState] = React.useState(() => {
-    return getHook(props.id)
-  })
+  const { hook: useHookState, resolver } = props
+
   const hookState = useHookState()
 
-  React.useEffect(() => {
-    const resolver = getResolver(props.id)
+  useEffect(() => {
     resolver(hookState)
-  }, [props.id, getResolver, hookState])
+  }, [resolver, hookState])
 
-  const hookStateRef = React.useRef(hookState)
+  const hookStateRef = useRef(hookState)
   hookStateRef.current = hookState
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
-      const resolver = getResolver(props.id)
       resolver(hookStateRef.current, true)
     }
-  }, [props.id, getResolver])
+  }, [resolver])
   return null
 }
 
-export default React.memo(Channel)
+export default memo(Channel)
