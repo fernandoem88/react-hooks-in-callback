@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React from 'react'
 import { useFormikContext } from 'formik'
-import { createActionsPackage } from 'react-hooks-in-callback'
+import { useHooksInCallback } from 'react-hooks-in-callback'
 
 const mainStyle = {
   padding: 2,
@@ -12,16 +12,18 @@ const mainStyle = {
 const font15 = { fontSize: 15 }
 const clickStyle = { fontWeight: 'bold', fontSize: 24 } as any
 const renderStyle = { ...clickStyle, color: 'red' } as any
-const { HooksWrapper, getHookState } = createActionsPackage()
+
+// const { HooksWrapper, getHookState } = createActionsPackage()
+
 export const MyField = ({ name }: { name: string }) => {
   // let's remove formik context from the component
   // const formik = useFormikContext();
   // rerenderRef value is updated only when there is a render: so it's a passive value
-  const rerenderRef = useRef(0)
+  const rerenderRef = React.useRef(-1)
   rerenderRef.current += 1
   // value is updated on each click event.
-  const [value, setValue] = useState(() => 0)
-  // const [HooksWrapper, getHookState] = useHooksInCallback()
+  const [value, setValue] = React.useState(() => 0)
+  const [HooksWrapper, getHookState] = useHooksInCallback()
 
   return (
     <div
@@ -45,7 +47,7 @@ export const MyField = ({ name }: { name: string }) => {
         <span style={clickStyle}>{value}</span>
       </div>
       <div style={font15}>
-        Total Render:&nbsp;&nbsp;
+        Total Re-render:&nbsp;&nbsp;
         <span style={renderStyle}>{rerenderRef.current}</span>
       </div>
     </div>
