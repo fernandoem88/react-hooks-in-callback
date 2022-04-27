@@ -10,6 +10,7 @@ export const uniqid = (str: string = '') => {
 
 export const createActionsPackage = () => {
   const store: Store = {
+    mounted: false,
     helpers: {} as Helpers,
     dispatch: () => {},
     hooks: {}
@@ -22,6 +23,7 @@ export const createActionsPackage = () => {
     return store.hooks[id]
   }
   store.helpers.deleteHook = (id) => {
+    store.dispatch({ type: 'DELETE', payload: id })
     delete store.hooks[id]
   }
 
@@ -34,14 +36,22 @@ export const createActionsPackage = () => {
         reject: (err?: any) => void
         isBeforeUnmount: boolean
       }
-    ) => boolean
+    ) => void
   ) => {
+    if (!store.mounted) {
+      const errMsg = `HooksWrapper should be mounted as first component under
+      your provider components tree.
+      This error occures because, either you forgot to mount it or it was already unmounted.`
+      // throw new Error(errMsg)
+      console.error(errMsg)
+      return Promise.resolve(undefined) as Promise<any>
+    }
     const id = uniqid('hook--')
     store.helpers.addHook(hook, id)
 
     let resolved = false
     const hookPromise = new Promise<S>((resolve, reject) => {
-      const finalResolve = (value: S) => {
+      const doResolve = (value: S) => {
         resolved = true
         resolve(value)
         store.helpers.deleteResolver(id)
@@ -56,13 +66,16 @@ export const createActionsPackage = () => {
         }
         if (suspender) {
           suspender(value, {
-            resolve: () => finalResolve(value),
-            reject,
+            resolve: () => doResolve(value),
+            reject: (err?: any) => {
+              resolved = true
+              reject(err)
+            },
             isBeforeUnmount
           })
           return
         }
-        finalResolve(value)
+        doResolve(value)
       }
       store.helpers.addResolver(id, resolver)
     })
@@ -70,28 +83,50 @@ export const createActionsPackage = () => {
     return hookPromise
   }
 
-  const subscribe = <S,>(
+  const subscribeToHookState = <S,>(
     hook: () => S,
-    subscriber: (state: S, error?: any) => void
+    subscriber: (
+      error: { message: string } | null,
+      data: {
+        state: S
+        isBeforeUnmount: boolean
+      }
+    ) => void
   ) => {
     let unsubscribed = false
-    getHookState(hook, (state) => {
-      subscriber(state)
-      return unsubscribed
-    }).catch((err) => {
-      subscriber(null as any, err)
+    let utils: any
+    getHookState(hook, (state, ut) => {
+      if (!utils) {
+        utils = ut
+      }
+      if (unsubscribed) {
+        ut.resolve()
+        return
+      }
+      subscriber(null, { state, isBeforeUnmount: !!ut.isBeforeUnmount })
+    }).catch((err: any) => {
+      const errData = {
+        message:
+          typeof err === 'string' ? err : err?.message || 'something went wrong'
+      }
+      subscriber(errData, null as any)
+      utils && utils.reject(errData.message)
+      unsubscribed = true
     })
     const unsubscribe = () => {
+      utils && utils.resolve()
       unsubscribed = true
     }
-    return unsubscribe
+    return { unsubscribe }
   }
 
   const getStore = () => store
 
   return {
-    HooksWrapper: React.memo(() => <HooksWrapper getStore={getStore} />),
+    HooksWrapper: React.memo(() => (
+      <HooksWrapper getStore={getStore} />
+    )) as React.FC<{}>,
     getHookState,
-    subscribeToHookState: subscribe
+    subscribeToHookState
   }
 }

@@ -18,6 +18,7 @@ declare module 'app-types' {
     payload: string
   }
   export interface Store {
+    mounted: boolean
     helpers: Helpers
     dispatch: (action: Action) => void
     hooks: { [id: string]: () => any }

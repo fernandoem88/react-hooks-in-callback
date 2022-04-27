@@ -16,9 +16,6 @@ const renderStyle = { ...clickStyle, color: 'red' } as any
 // const { HooksWrapper, getHookState } = createActionsPackage()
 
 export const MyField = ({ name }: { name: string }) => {
-  // let's remove formik context from the component
-  // const formik = useFormikContext();
-  // rerenderRef value is updated only when there is a render: so it's a passive value
   const rerenderRef = React.useRef(-1)
   rerenderRef.current += 1
   // value is updated on each click event.
@@ -33,11 +30,6 @@ export const MyField = ({ name }: { name: string }) => {
         const nextValue = value + 1
         setValue((v) => v + 1)
         formik.setFieldValue(name, nextValue)
-        // you can check the updated formik field value
-        // const [field] = await getHookState(function useOnce() {
-        //  return useField(props.name);
-        // });
-        // console.log("field value", field.value);
       }}
     >
       <HooksWrapper />
@@ -47,7 +39,7 @@ export const MyField = ({ name }: { name: string }) => {
         <span style={clickStyle}>{value}</span>
       </div>
       <div style={font15}>
-        Total Re-render:&nbsp;&nbsp;
+        Total Re-renders:&nbsp;&nbsp;
         <span style={renderStyle}>{rerenderRef.current}</span>
       </div>
     </div>

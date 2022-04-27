@@ -66,15 +66,14 @@ We can solve that issue if we can take the _useFormikContext_ out of the Field c
 
 ```typescript
 const Field = (name: string) => {
-    // const formik = useFormikContext(); // -----!
-    const [HooksWrapper, getHookState] = useHooksInCallback(); // +++++!
+    const [HooksWrapper, getHookState] = useHooksInCallback();
     ...
     return (
         <div>
             <HooksWrapper /> {/* added! */}
             <button onClick={async () => {
               // formik context will be used only once in this callback
-              const formik = await getHookState(useFormikContext); // +++++!
+              const formik = await getHookState(useFormikContext);
               formik.setFieldValue(name, newFieldValue)
             }}/>
         <div/>
@@ -100,19 +99,19 @@ first of all, we need to create utilities for our async actions
 ```ts
 import { createActionsPackage } from 'react-hooks-in-callback'
 
-export const utils = createActionsPackage()
-// Utils: { HooksWrapper, getHookState, subscribeToHookState }
+export const actionsPkg = createActionsPackage()
+// actionsPkg: { HooksWrapper, getHookState, subscribeToHookState }
 // HooksWrapper => Component to be mounted at the top level, directly under all used hooks contexts providers
 // getHookState => get your hook state in an async way in your action
-// subscribeToHookState => subscribe to hooks state changes
+// subscribeToHookState => subscribe to hooks state changes (probably you don't need it for your actions)
 ```
 
 then we need to mount the HooksWrapper to process our hooks states
 
 ```ts
-import { utils } from './configs'
+import { actionsPkg } from './configs'
 
-const { HooksWrapper } = utils
+const { HooksWrapper } = actionsPkg
 
 const MyRootComponent = (props) => {
   return (
@@ -143,16 +142,15 @@ export const useActionUtils = () => {
 and use it like follows
 
 ```ts
-import { utils, api } from './configs'
+import { actionsPkg, api } from './configs'
 import { useActionUtils } from './hooks'
 
-const login = async (userId: string) => {
-  // here we will mount useActionUtils in the HooksWrapper component and get its state in a promise
-  const { dispatch, history, getState } = await utils.getHookState(
-    useActionUtils
-  )
+const { getHookState } = actionsPkg
 
-  const configs = utils.getConfig()
+const login = async (userId: string) => {
+  // here we will mount useActionUtils in the HooksWrapper component and wait for its state to be resolved.
+  const { dispatch, history, getState } = await getHookState(useActionUtils)
+
   try {
     history.push('/login')
     dispatch({ type: 'LoginStart' })
@@ -178,25 +176,23 @@ if it was a redux-thunk action, the synthax would be more complex, we can see th
 const login = (userId: string, history: History) => {
   //  hooks values/states should be passed as action params like we passed history in this example
   return async (dispatch, getState, config: Config) => {
-    // action logic goes here
+    // your logic goes here
   }
 }
 // react-hooks-in-callback action synthax
 const login = async (userId: string) => {
-  //  hooks values/states and config are defined directly in the action body
-  // action logic goes here
+  // hooks values/states are defined directly in the action body
+  // your logic goes here
 }
 ```
 
 the last step now is to use everything in a component
 
 ```typescript
-import { utils } from './configs'
 import { login } from './actions'
 
 const App = () => {
   useEffect(() => {
-    // using react-hooks-in-callback approach!
     login('admin') // don't need to dispatch or to pass history
   }, [])
 
@@ -207,9 +203,7 @@ const App = () => {
 just to compare both approaches, if we used a _redux-thunk_ way instead, we had to define _dispatch_ and _history_ in our components to dispatch the login action and pass history as parameter
 
 ```typescript
-import { utils } from './configs'
 import { login } from './actions'
-import { useConfigContext } from './hooks'
 
 const App = () => {
   // if we used a redux-thunk action we should need dispatch and history in our component like bellow
@@ -255,15 +249,14 @@ So in this case what we want to do is to skip the undefined value and wait for t
 ```typescript
 const hookState = await getHookState(useDivCount, (state, utils) => {
   if (state !== undefined) {
-    utils.resolve(state)
+    utils.resolve() // this will resolve the current state
     return
   }
   if (utils.isBeforeUnmount) {
     // this should not happen normally, but if it happens and
     // you did not resolve the getHookState and some how you are unmounting the component
     // you should do something to not keep this promise in pending state
-    // resolve your state or
-    // use utils.reject or throw some error
+    // utils.resolve or use utils.reject
   }
 })
 ```
@@ -273,12 +266,17 @@ you can also subscribe to state changes in useEffect using _subscribeToHookState
 ```typescript
 const [HooksWrapper, , subscribeToHookState] = useHooksInCallback()
 useEffect(() => {
-  const subscription = subscribeToHookState(
-    useDivCount,
-    (state, isBeforeUnmount) => {
-      // subscription logic goes here
+  const subscription = subscribeToHookState(useDivCount, (
+    error,
+    data /*{ state: S; isBeforeUnmount: boolean }*/
+  ) => {
+    if (error) {
+      // console.error(error.message);
+      return
     }
-  )
+    // subscription logic goes here
+    const { state, isBeforeUnmount } = data
+  })
   return subscription.unsubscribe
 }, [])
 ```

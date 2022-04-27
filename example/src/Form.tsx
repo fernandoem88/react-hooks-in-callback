@@ -26,7 +26,6 @@ export const MyForm = function MyForm() {
       }}
     >
       <div>
-        pippo
         <HooksWrapper />
         <div style={mainStyle}>
           <h1 style={h1Style}>Formik test</h1>
@@ -34,6 +33,7 @@ export const MyForm = function MyForm() {
             style={btnStyle}
             onClick={async () => {
               const formik = await getHookState(useFormikContext)
+              console.log('formik', formik)
               formik.submitForm()
             }}
           >

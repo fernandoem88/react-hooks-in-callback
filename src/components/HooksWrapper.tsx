@@ -1,4 +1,4 @@
-import React, { FC, useReducer, memo } from 'react'
+import React, { FC, useReducer, useEffect } from 'react'
 import { Action, Store } from 'app-types'
 import Channels from './Channels'
 
@@ -13,6 +13,15 @@ export const HooksWrapper: FC<{
     )
   }
 
+  useEffect(() => {
+    const store = props.getStore()
+    store.mounted = true
+    return () => {
+      store.mounted = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const [ids, dispatch] = useReducer((ids: string[], action: Action) => {
     if (action.type === 'ADD') {
       return [...ids, action.payload]
@@ -23,9 +32,7 @@ export const HooksWrapper: FC<{
     return ids
   }, [])
 
-  console.log('render')
-
   return <Channels getStore={props.getStore} ids={ids} dispatch={dispatch} />
 }
 
-export default memo(HooksWrapper) as FC<{}>
+export default HooksWrapper // memo(HooksWrapper) as FC<{}>

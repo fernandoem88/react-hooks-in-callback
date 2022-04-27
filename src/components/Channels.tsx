@@ -34,6 +34,18 @@ const Channels: React.FC<Props> = (props) => {
     store.dispatch = (action: any) => dispatch(action)
   })
 
+  React.useEffect(() => {
+    return () => {
+      const store = getStore()
+      store.dispatch = () => {
+        console.log(
+          'Hooks-In-CB: cannot dispatch action, store provider already unmounted'
+        )
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const channels = React.useMemo(() => {
     const store = getStore()
     return ids.map((id) => (
